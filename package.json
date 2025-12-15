@@ -1,0 +1,56 @@
+{
+  "name": "react-native-nitro-crypto",
+  "version": "0.1.6",
+  "description": "Node.js crypto implementation for React Native using Nitro Modules and Rust",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iwater/react-native-nitro-crypto.git"
+  },
+  "homepage": "https://github.com/iwater/react-native-nitro-crypto",
+  "main": "./lib/index.js",
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.js",
+      "require": "./lib/index.js",
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "copy-clib": "rm -rf ios/Frameworks/RNCrypto.xcframework && mkdir -p ios/Frameworks && cp -R ../rust_c_crypto/target/xcframework/RNCrypto.xcframework ios/Frameworks/ && mkdir -p android/libs/arm64-v8a android/libs/armeabi-v7a android/libs/x86 android/libs/x86_64 && cp ../rust_c_crypto/target/aarch64-linux-android/release/librn_node_crypto.so android/libs/arm64-v8a/ && cp ../rust_c_crypto/target/armv7-linux-androideabi/release/librn_node_crypto.so android/libs/armeabi-v7a/ && cp ../rust_c_crypto/target/i686-linux-android/release/librn_node_crypto.so android/libs/x86/ && cp ../rust_c_crypto/target/x86_64-linux-android/release/librn_node_crypto.so android/libs/x86_64/"
+  },
+  "keywords": [
+    "react-native",
+    "crypto",
+    "node-crypto",
+    "nitro-modules"
+  ],
+  "author": "iwater <iwater@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "@craftzdog/react-native-buffer": "^6.0.5",
+    "react-native-nitro-modules": "^0.31.10"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react-native": "^0.73.0",
+    "nitrogen": "^0.31.10",
+    "typescript": "^5.3.3"
+  },
+  "packageManager": "yarn@4.12.0",
+  "files": [
+    "lib/",
+    "src/",
+    "cpp/",
+    "ios/",
+    "android/",
+    "nitrogen/",
+    "*.podspec"
+  ]
+}

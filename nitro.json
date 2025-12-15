@@ -1,0 +1,32 @@
+{
+    "$schema": "https://nitro.margelo.com/nitro.schema.json",
+    "cxxNamespace": [
+        "node_crypto"
+    ],
+    "ios": {
+        "iosModuleName": "RNNodeCrypto"
+    },
+    "android": {
+        "androidNamespace": [
+            "node_crypto"
+        ],
+        "androidCxxLibName": "RNNodeCrypto"
+    },
+    "autolinking": {
+        "NitroNodeCrypto": {
+            "cpp": "HybridNodeCrypto"
+        }
+    },
+    "cxx": {
+        "extraIncludeDirs": [
+            "./cpp",
+            "../../packages/rust_c_crypto/include"
+        ],
+        "extraLibs": [
+            "rn_node_crypto"
+        ],
+        "extraLibDirs": [
+            "../../packages/rust_c_crypto/target/release"
+        ]
+    }
+}
