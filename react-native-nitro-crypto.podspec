@@ -24,8 +24,7 @@ Pod::Spec.new do |s|
   # Add vendored xcframework (Rust binary)
   s.vendored_frameworks = "ios/Frameworks/RNCrypto.xcframework"
   
-  # Ensure C++ link
-  s.libraries = "c++"
+  # 动态库已自包含所有依赖，无需显式链接 C++ 运行时
   
   s.pod_target_xcconfig = {
     "HEADER_SEARCH_PATHS" => [
@@ -36,8 +35,8 @@ Pod::Spec.new do |s|
       "\"$(PODS_TARGET_SRCROOT)/nitrogen/generated/ios/c++\"",
       "\"$(PODS_TARGET_SRCROOT)/nitrogen/generated/ios\"",
       "\"$(PODS_TARGET_SRCROOT)/cpp\"",
-      "\"$(PODS_TARGET_SRCROOT)/ios/Frameworks/RNCrypto.xcframework/ios-arm64/Headers\"",
-      "\"$(PODS_TARGET_SRCROOT)/ios/Frameworks/RNCrypto.xcframework/ios-arm64_x86_64-simulator/Headers\""
+      "\"$(PODS_TARGET_SRCROOT)/ios/Frameworks/RNCrypto.xcframework/ios-arm64/RNCrypto.framework/Headers\"",
+      "\"$(PODS_TARGET_SRCROOT)/ios/Frameworks/RNCrypto.xcframework/ios-arm64_x86_64-simulator/RNCrypto.framework/Headers\""
     ],
     "OTHER_SWIFT_FLAGS" => "-cxx-interoperability-mode=default"
   }
