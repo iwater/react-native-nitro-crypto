@@ -359,16 +359,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@craftzdog/react-native-buffer@npm:^6.0.5":
-  version: 6.1.1
-  resolution: "@craftzdog/react-native-buffer@npm:6.1.1"
-  dependencies:
-    ieee754: "npm:^1.2.1"
-    react-native-quick-base64: "npm:^2.2.2"
-  checksum: 10c0/be70e3b53f72aaa97e7b742101e51039cafa0a20250addf3c1fbd2a852f59f50190ff79429152595b8b5330d58576c864fb211ceda8f967fa6b2f46df263b3d8
-  languageName: node
-  linkType: hard
-
 "@isaacs/balanced-match@npm:^4.0.1":
   version: 4.0.1
   resolution: "@isaacs/balanced-match@npm:4.0.1"
@@ -1876,13 +1866,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ieee754@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "ieee754@npm:1.2.1"
-  checksum: 10c0/b0782ef5e0935b9f12883a2e2aa37baa75da6e66ce6515c168697b42160807d9330de9a32ec1ed73149aea02e0d822e572bca6f1e22bdcbd2149e13b050b17bb
-  languageName: node
-  linkType: hard
-
 "image-size@npm:^1.0.2":
   version: 1.2.1
   resolution: "image-size@npm:1.2.1"
@@ -3070,38 +3053,41 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-nitro-buffer@npm:*":
+  version: 0.0.4
+  resolution: "react-native-nitro-buffer@npm:0.0.4"
+  dependencies:
+    react-native-nitro-modules: "npm:*"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+    react-native-nitro-modules: "*"
+  checksum: 10c0/f8ea067caaefcd4abc6ed41b9e332d17b01c7d2b9618ae9b7e2b18480f192a32c1462696f18f468821c0b6ceb7713b9c907860a864411a58e4edd4f9371354b4
+  languageName: node
+  linkType: hard
+
 "react-native-nitro-crypto@workspace:.":
   version: 0.0.0-use.local
   resolution: "react-native-nitro-crypto@workspace:."
   dependencies:
-    "@craftzdog/react-native-buffer": "npm:^6.0.5"
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^20.0.0"
     "@types/react-native": "npm:^0.73.0"
     nitrogen: "npm:^0.31.10"
-    react-native-nitro-modules: "npm:^0.31.10"
+    react-native-nitro-buffer: "npm:*"
+    react-native-nitro-modules: "npm:*"
     ts-jest: "npm:^29.4.6"
     typescript: "npm:^5.3.3"
   languageName: unknown
   linkType: soft
 
-"react-native-nitro-modules@npm:^0.31.10":
+"react-native-nitro-modules@npm:*, react-native-nitro-modules@npm:^0.31.10":
   version: 0.31.10
   resolution: "react-native-nitro-modules@npm:0.31.10"
   peerDependencies:
     react: "*"
     react-native: "*"
   checksum: 10c0/0acc6ca5f12e24a6601e682070f257a771b95214c11fba911b342af705071234544c93076900f43400c8ae2f1a6738011b120e4425813968102997860ffd7626
-  languageName: node
-  linkType: hard
-
-"react-native-quick-base64@npm:^2.2.2":
-  version: 2.2.2
-  resolution: "react-native-quick-base64@npm:2.2.2"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10c0/25a550388ce51ada9c63be3b301f1c0e1de160ff3c3b956ea081febecf6d8a2cd6ed510b5cb34403c540a2a475c614bad3b098f922fb88cc9dd72ebf1949d972
   languageName: node
   linkType: hard
 

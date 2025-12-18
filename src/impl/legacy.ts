@@ -1,4 +1,4 @@
-import { Buffer } from '@craftzdog/react-native-buffer'
+import { Buffer } from 'react-native-nitro-buffer'
 import { Hash } from './Hash'
 import { Cipheriv, Decipheriv, CipherAlgorithm } from './Cipheriv'
 

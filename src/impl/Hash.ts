@@ -1,4 +1,4 @@
-import { Buffer } from '@craftzdog/react-native-buffer'
+import { Buffer } from 'react-native-nitro-buffer'
 import { native } from '../native'
 
 export type HashAlgorithm = 'sha1' | 'sha256' | 'sha384' | 'sha512' | 'md5' | 'sha3-256' | 'sha3-384' | 'sha3-512' | 'shake128' | 'shake256'

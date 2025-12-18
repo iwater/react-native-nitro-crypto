@@ -1,4 +1,4 @@
-import { Buffer } from '@craftzdog/react-native-buffer'
+import { Buffer } from 'react-native-nitro-buffer'
 import { native } from '../native'
 import type { HybridECDH } from '../specs/NitroNodeCrypto.nitro'
 import { toArrayBuffer } from './utils'

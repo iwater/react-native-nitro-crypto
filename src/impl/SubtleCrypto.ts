@@ -1,4 +1,4 @@
-import { Buffer } from '@craftzdog/react-native-buffer'
+import { Buffer } from 'react-native-nitro-buffer'
 import { native } from '../native'
 import { toArrayBuffer, prepareBuffer, base64UrlEncode, base64UrlDecode, getJwkAlg, JsonWebKey } from './utils'
 import { KeyObject, createSecretKey, createPublicKey, createPrivateKey, createKeyObjectFromRaw, generateKeyPairSync } from './KeyObject'

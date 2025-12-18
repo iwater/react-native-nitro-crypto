@@ -1,16 +1,29 @@
 # react-native-nitro-crypto
 
-使用 [Nitro Modules](https://github.com/mrousavy/react-native-nitro) 和 Rust 为 React Native 实现的 Node.js `crypto` 模块。
+使用 [Nitro Modules](https://github.com/mrousavy/react-native-nitro) 和 Rust 为 React Native 实现的高性能 Node.js `crypto` & Web Crypto 库。
 
-本库提供了一个高性能、跨平台的解决方案，包含了 Node.js `crypto` API 和标准 Web Crypto API 的实现，底层由原生 Rust 驱动。它实现了与 Node.js 24 `crypto` 模块 **几乎完全的兼容性**，实现了 **所有接口** 并保持参数一致。
+本库提供了一个高性能、跨平台的解决方案，包含了 Node.js `crypto` API 和标准 Web Crypto API 的实现，底层由原生 Rust 驱动。它实现了与 Node.js 24 `crypto` 模块 **几乎完全的兼容性**，同时保持了极致的运行效率。
+
+## 🚀 为什么选择 Nitro Crypto?
+
+在 React Native 生态系统中，`react-native-nitro-crypto` 通过结合现代架构与极致兼容性脱颖而出：
+
+| 特性 | Nitro Crypto | Quick Crypto | Expo Crypto |
+| :--- | :---: | :---: | :---: |
+| **底层引擎** | **Nitro + Rust** | JSI + C++ | 原生 (Java/Swift) |
+| **Node.js 24 兼容性** | ✅ **几乎完全支持** | ✅ 部分支持 | ❌ 极少覆盖 |
+| **Web Crypto API** | ✅ **完全支持** | ❌ 部分支持 | ❌ 部分支持 |
+| **后量子加密 (PQC)** | ✅ **支持** | ❌ 不支持 | ❌ 不支持 |
+| **运行性能** | 极高 (Nitro) | 高 (JSI) | 一般 |
 
 ## 特性
 
-*   **⚡️ 高性能**：基于 Rust 和 Nitro Modules 构建，提供接近原生的性能。
-*   **🔄 Node.js 24 兼容性**：实现了 Node.js 24 `crypto` 模块的 **所有接口**。API 签名和参数与 Node.js 严格对齐，这使得您可以在 React Native 中直接使用几乎任何依赖加密功能的 Node.js 库，而无需修改代码。
-*   **🌐 Web Crypto API**：完全支持标准的 Web Crypto API (`crypto.subtle`)，与浏览器环境保持一致。
-*   **🔐 后量子密码学**：支持下一代算法，如 ML-DSA (Dilithium) 和 ML-KEM (Kyber)。
-*   **📱 跨平台**：同时支持 iOS 和 Android。
+*   **⚡️ 极致性能**：利用 Nitro Modules 的超低开销，提供接近原生的执行速度。
+*   **🔄 Node.js 24 兼容性**：实现了 Node.js 24 `crypto` 模块的 **几乎所有接口**（Hash, HMAC, Cipher, Sign, DiffieHellman 等）。API 签名和参数与 Node.js 严格对齐，无需修改即可运行大多数依赖加密的 Node 库。
+*   **🌐 Web Crypto API**：完全支持标准的 Web Crypto API (`crypto.subtle`)，开发体验与现代浏览器无异。
+*   **🔐 后量子密码学 (PQC)**：提供对下一代加密算法如 **ML-DSA (Dilithium)** 和 **ML-KEM (Kyber)** 的原生支持。
+*   **🦀 现代 Rust 后端**：基于内存安全、高性能的 Rust 核心构建。
+*   **📱 跨平台**：为 iOS 和 Android 提供一流的兼容性和性能。
 
 ## 安装
 

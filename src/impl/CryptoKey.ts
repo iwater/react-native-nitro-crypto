@@ -1,4 +1,4 @@
-import { Buffer } from '@craftzdog/react-native-buffer'
+import { Buffer } from 'react-native-nitro-buffer'
 import { KeyObject } from './KeyObject'
 
 export type BufferSource = ArrayBuffer | ArrayBufferView

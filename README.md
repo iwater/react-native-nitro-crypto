@@ -1,16 +1,29 @@
 # react-native-nitro-crypto
 
-Node.js `crypto` implementation for React Native using [Nitro Modules](https://github.com/mrousavy/react-native-nitro) and Rust.
+High-performance Node.js `crypto` & Web Crypto for React Native, powered by [Nitro Modules](https://github.com/mrousavy/react-native-nitro) and Rust.
 
-This library provides a high-performance, cross-platform implementation of both the Node.js `crypto` API and the standard Web Crypto API, powered by a native Rust backend. It achieves **almost complete compatibility** with the Node.js 24 `crypto` module, implementing **all interfaces** with matching parameters.
+This library provides a high-performance, cross-platform implementation of both the Node.js `crypto` API and the standard Web Crypto API, powered by a native Rust backend. It achieves **almost complete compatibility** with the Node.js 24 `crypto` module, implementing almost every interface with matching parameters.
+
+## 🚀 Why Nitro Crypto?
+
+In the React Native ecosystem, `react-native-nitro-crypto` stands out by merging modern performance with future-proof security:
+
+| Feature | Nitro Crypto | Quick Crypto | Expo Crypto |
+| :--- | :---: | :---: | :---: |
+| **Engine** | **Nitro + Rust** | JSI + C++ | Native (Java/Swift) |
+| **Node.js 24 Compat** | ✅ Full | ✅ Partial | ❌ Minimal |
+| **Web Crypto API** | ✅ Full | ❌ Partial | ❌ Partial |
+| **Post-Quantum (PQC)** | ✅ **Yes** | ❌ No | ❌ No |
+| **Performance** | Ultra-High | High | Moderate |
 
 ## Features
 
-*   **⚡️ High Performance**: Built with Rust and Nitro Modules for near-native performance.
-*   **🔄 Node.js 24 Compatibility**: Implements **all interfaces** of the Node.js 24 `crypto` module. API signatures and parameters are rigorously aligned with Node.js, allowing you to use almost any crypto-dependent Node.js library in React Native without modification.
-*   **🌐 Web Crypto API**: Full support for the standard Web Crypto API (`crypto.subtle`), identical to the browser environment.
-*   **🔐 Post-Quantum Cryptography**: Includes support for next-generation algorithms like ML-DSA (Dilithium) and ML-KEM (Kyber).
-*   **📱 Cross-Platform**: Works on both iOS and Android.
+*   **⚡️ Nitro-Fast Performance**: Leverages Nitro Modules' ultra-low overhead for near-native execution speeds.
+*   **🔄 Node.js 24 Compatibility**: Implements **all interfaces** of the Node.js 24 `crypto` module (Hash, HMAC, Cipher, Sign, DiffieHellman, etc.).
+*   **🌐 Web Crypto API**: Full support for the standard Web Crypto API (`crypto.subtle`), identical to modern browsers.
+*   **🔐 Post-Quantum Cryptography (PQC)**: Industry-leading support for next-gen algorithms like **ML-DSA (Dilithium)** and **ML-KEM (Kyber)**.
+*   **🦀 Modern Rust Backend**: Built on a memory-safe, high-performance Rust core.
+*   **📱 Cross-Platform**: Premium support for both iOS and Android.
 
 ## Installation
 

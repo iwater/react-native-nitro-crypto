@@ -1,4 +1,4 @@
-import { Buffer } from '@craftzdog/react-native-buffer'
+import { Buffer } from 'react-native-nitro-buffer'
 import {
     Hash,
     HashAlgorithm
@@ -577,3 +577,5 @@ export const Decipher = Decipheriv
 
 // Default export
 export default crypto
+
+export { runCompatibilityTests, type TestReport } from './CompatibilityRunner'
