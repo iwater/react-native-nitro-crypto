@@ -19,8 +19,7 @@
     },
     "cxx": {
         "extraIncludeDirs": [
-            "./cpp",
-            "../../packages/rust_c_crypto/include"
+            "./cpp"
         ],
         "extraLibs": [
             "rn_node_crypto"

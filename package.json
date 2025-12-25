@@ -1,6 +1,6 @@
 {
   "name": "react-native-nitro-crypto",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "High-performance Node.js & Web Crypto for React Native, powered by Nitro Modules and Rust. Almost complete coverage of Node.js 24 crypto APIs.",
   "repository": {
     "type": "git",
@@ -39,19 +39,22 @@
   ],
   "author": "iwater <iwater@gmail.com>",
   "license": "ISC",
-  "dependencies": {
-    "react-native-nitro-buffer": "*",
-    "react-native-nitro-modules": "*"
+  "peerDependencies": {
+    "react-native-nitro-modules": "^0.32.0"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^20.0.0",
     "@types/react-native": "^0.73.0",
-    "nitrogen": "^0.31.10",
+    "nitrogen": "^0.32.0",
+    "react-native-nitro-modules": "^0.32.0",
     "ts-jest": "^29.4.6",
     "typescript": "^5.3.3"
   },
   "packageManager": "yarn@4.12.0",
+  "dependencies": {
+    "react-native-nitro-buffer": "^0.0.11"
+  },
   "files": [
     "lib/",
     "src/",

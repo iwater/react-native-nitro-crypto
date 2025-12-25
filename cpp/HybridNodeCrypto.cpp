@@ -14,7 +14,7 @@ namespace margelo::nitro::node_crypto {
 std::shared_ptr<ArrayBuffer> HybridDiffieHellman::generateKeys() {
   size_t len = rn_crypto_dh_generate_keys(_dh, nullptr);
   if (len == 0)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
 
   std::vector<uint8_t> buffer(len);
   rn_crypto_dh_generate_keys(_dh, buffer.data());
@@ -24,12 +24,12 @@ std::shared_ptr<ArrayBuffer> HybridDiffieHellman::generateKeys() {
 std::shared_ptr<ArrayBuffer> HybridDiffieHellman::computeSecret(
     const std::shared_ptr<ArrayBuffer> &otherPublicKey) {
   if (!otherPublicKey || otherPublicKey->size() == 0)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
 
   size_t len = rn_crypto_dh_compute_secret(_dh, otherPublicKey->data(),
                                            otherPublicKey->size(), nullptr);
   if (len == 0)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
 
   std::vector<uint8_t> buffer(len);
   rn_crypto_dh_compute_secret(_dh, otherPublicKey->data(),
@@ -90,7 +90,7 @@ void HybridDiffieHellman::setPrivateKey(
 std::shared_ptr<ArrayBuffer>
 HybridCipher::update(const std::shared_ptr<ArrayBuffer> &data) {
   if (!data || data->size() == 0)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
 
   // For update, output size can be at most input size + block size (buffered)
   // Or exactly input size for CTR.
@@ -121,18 +121,18 @@ void HybridCipher::setAAD(const std::shared_ptr<ArrayBuffer> &aad) {
 
 std::shared_ptr<ArrayBuffer> HybridCipher::getAuthTag() {
   if (!_ctx)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
 
   // First call with NULL to get length
   int32_t len = rn_crypto_cipher_get_auth_tag(_ctx, nullptr, 0);
   if (len <= 0)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
 
   std::vector<uint8_t> buffer(len);
   int32_t res =
       rn_crypto_cipher_get_auth_tag(_ctx, buffer.data(), buffer.size());
   if (res <= 0)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
 
   return ArrayBuffer::copy(buffer.data(), res);
 }
@@ -142,7 +142,7 @@ std::shared_ptr<ArrayBuffer> HybridCipher::getAuthTag() {
 std::shared_ptr<ArrayBuffer>
 HybridDecipher::update(const std::shared_ptr<ArrayBuffer> &data) {
   if (!data || data->size() == 0)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
 
   std::vector<uint8_t> buffer(data->size() + 32);
   size_t written =
@@ -185,7 +185,7 @@ std::shared_ptr<ArrayBuffer> HybridNodeCrypto::randomBytes(double size) {
 std::shared_ptr<ArrayBuffer>
 HybridNodeCrypto::sha1(const std::shared_ptr<ArrayBuffer> &data) {
   if (!data)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   uint8_t hash[20];
   rn_crypto_sha1(data->data(), data->size(), hash);
   return ArrayBuffer::copy(hash, 20);
@@ -194,7 +194,7 @@ HybridNodeCrypto::sha1(const std::shared_ptr<ArrayBuffer> &data) {
 std::shared_ptr<ArrayBuffer>
 HybridNodeCrypto::sha256(const std::shared_ptr<ArrayBuffer> &data) {
   if (!data)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   uint8_t hash[32];
   rn_crypto_sha256(data->data(), data->size(), hash);
   return ArrayBuffer::copy(hash, 32);
@@ -203,7 +203,7 @@ HybridNodeCrypto::sha256(const std::shared_ptr<ArrayBuffer> &data) {
 std::shared_ptr<ArrayBuffer>
 HybridNodeCrypto::sha512(const std::shared_ptr<ArrayBuffer> &data) {
   if (!data)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   uint8_t hash[64];
   rn_crypto_sha512(data->data(), data->size(), hash);
   return ArrayBuffer::copy(hash, 64);
@@ -212,7 +212,7 @@ HybridNodeCrypto::sha512(const std::shared_ptr<ArrayBuffer> &data) {
 std::shared_ptr<ArrayBuffer>
 HybridNodeCrypto::md5(const std::shared_ptr<ArrayBuffer> &data) {
   if (!data)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   uint8_t hash[16];
   rn_crypto_md5(data->data(), data->size(), hash);
   return ArrayBuffer::copy(hash, 16);
@@ -221,7 +221,7 @@ HybridNodeCrypto::md5(const std::shared_ptr<ArrayBuffer> &data) {
 std::shared_ptr<ArrayBuffer>
 HybridNodeCrypto::sha384(const std::shared_ptr<ArrayBuffer> &data) {
   if (!data)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   uint8_t hash[48];
   rn_crypto_sha384(data->data(), data->size(), hash);
   return ArrayBuffer::copy(hash, 48);
@@ -230,7 +230,7 @@ HybridNodeCrypto::sha384(const std::shared_ptr<ArrayBuffer> &data) {
 std::shared_ptr<ArrayBuffer>
 HybridNodeCrypto::sha3_256(const std::shared_ptr<ArrayBuffer> &data) {
   if (!data)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   uint8_t hash[32];
   rn_crypto_sha3_256(data->data(), data->size(), hash);
   return ArrayBuffer::copy(hash, 32);
@@ -239,7 +239,7 @@ HybridNodeCrypto::sha3_256(const std::shared_ptr<ArrayBuffer> &data) {
 std::shared_ptr<ArrayBuffer>
 HybridNodeCrypto::sha3_384(const std::shared_ptr<ArrayBuffer> &data) {
   if (!data)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   uint8_t hash[48];
   rn_crypto_sha3_384(data->data(), data->size(), hash);
   return ArrayBuffer::copy(hash, 48);
@@ -248,7 +248,7 @@ HybridNodeCrypto::sha3_384(const std::shared_ptr<ArrayBuffer> &data) {
 std::shared_ptr<ArrayBuffer>
 HybridNodeCrypto::sha3_512(const std::shared_ptr<ArrayBuffer> &data) {
   if (!data)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   uint8_t hash[64];
   rn_crypto_sha3_512(data->data(), data->size(), hash);
   return ArrayBuffer::copy(hash, 64);
@@ -259,7 +259,7 @@ HybridNodeCrypto::cshake128(const std::shared_ptr<ArrayBuffer> &data,
                             const std::shared_ptr<ArrayBuffer> &customization,
                             double outputLen) {
   if (!data)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   size_t outLen = static_cast<size_t>(outputLen);
   std::vector<uint8_t> hash(outLen);
   const uint8_t *customData = customization ? customization->data() : nullptr;
@@ -274,7 +274,7 @@ HybridNodeCrypto::cshake256(const std::shared_ptr<ArrayBuffer> &data,
                             const std::shared_ptr<ArrayBuffer> &customization,
                             double outputLen) {
   if (!data)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   size_t outLen = static_cast<size_t>(outputLen);
   std::vector<uint8_t> hash(outLen);
   const uint8_t *customData = customization ? customization->data() : nullptr;
@@ -294,7 +294,7 @@ void HybridHmac::update(const std::shared_ptr<ArrayBuffer> &data) {
 
 std::shared_ptr<ArrayBuffer> HybridHmac::digest() {
   if (!_ctx)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
 
   // Get output length
   // The C API rn_crypto_hmac_digest returns the size written.
@@ -322,7 +322,7 @@ std::shared_ptr<ArrayBuffer> HybridHmac::digest() {
   _ctx = nullptr;
 
   if (len == 0) {
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   }
 
   return ArrayBuffer::copy(buffer.data(), len);
@@ -351,7 +351,7 @@ HybridNodeCrypto::pbkdf2Sha256(const std::shared_ptr<ArrayBuffer> &password,
                                const std::shared_ptr<ArrayBuffer> &salt,
                                double iterations, double keylen) {
   if (!password || !salt)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   size_t len = static_cast<size_t>(keylen);
   std::vector<uint8_t> key(len);
   rn_crypto_pbkdf2_sha256(password->data(), password->size(), salt->data(),
@@ -443,13 +443,13 @@ void HybridSign::update(const std::shared_ptr<ArrayBuffer> &data) {
 std::shared_ptr<ArrayBuffer>
 HybridSign::sign(const std::shared_ptr<ArrayBuffer> &privateKeyPem) {
   if (!_ctx || !privateKeyPem)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
 
   // First call with null to get size
   size_t sig_len = rn_crypto_sign_sign(_ctx, privateKeyPem->data(),
                                        privateKeyPem->size(), nullptr);
   if (sig_len == 0)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
 
   std::vector<uint8_t> buffer(sig_len);
   rn_crypto_sign_sign(_ctx, privateKeyPem->data(), privateKeyPem->size(),
@@ -500,11 +500,11 @@ HybridNodeCrypto::createVerify(const std::string &algorithm) {
 std::shared_ptr<ArrayBuffer> HybridNodeCrypto::certExportChallenge(
     const std::shared_ptr<ArrayBuffer> &spkac) {
   if (!spkac)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   size_t len =
       rn_crypto_cert_export_challenge(spkac->data(), spkac->size(), nullptr);
   if (len == 0)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   std::vector<uint8_t> buffer(len);
   rn_crypto_cert_export_challenge(spkac->data(), spkac->size(), buffer.data());
   return ArrayBuffer::copy(buffer.data(), buffer.size());
@@ -513,11 +513,11 @@ std::shared_ptr<ArrayBuffer> HybridNodeCrypto::certExportChallenge(
 std::shared_ptr<ArrayBuffer> HybridNodeCrypto::certExportPublicKey(
     const std::shared_ptr<ArrayBuffer> &spkac) {
   if (!spkac)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   size_t len =
       rn_crypto_cert_export_public_key(spkac->data(), spkac->size(), nullptr);
   if (len == 0)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   std::vector<uint8_t> buffer(len);
   rn_crypto_cert_export_public_key(spkac->data(), spkac->size(), buffer.data());
   return ArrayBuffer::copy(buffer.data(), buffer.size());
@@ -615,10 +615,10 @@ std::string HybridX509Certificate::getValidTo() {
 
 std::shared_ptr<ArrayBuffer> HybridX509Certificate::getRaw() {
   if (!_ctx)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   size_t len = rn_crypto_x509_raw(_ctx, nullptr);
   if (len == 0)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   std::vector<uint8_t> buffer(len);
   rn_crypto_x509_raw(_ctx, buffer.data());
   return ArrayBuffer::copy(buffer.data(), buffer.size());
@@ -657,10 +657,10 @@ std::string HybridX509Certificate::getSubjectAltName() {
 
 std::shared_ptr<ArrayBuffer> HybridX509Certificate::getPublicKey() {
   if (!_ctx)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   size_t len = rn_crypto_x509_public_key(_ctx, nullptr);
   if (len == 0)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   std::vector<uint8_t> buffer(len);
   rn_crypto_x509_public_key(_ctx, buffer.data());
   return ArrayBuffer::copy(buffer.data(), buffer.size());
@@ -1054,7 +1054,7 @@ double HybridKeyObject::getAsymmetricKeyType() {
 
 std::shared_ptr<ArrayBuffer> HybridKeyObject::extractData() {
   if (!_key)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   size_t len = rn_crypto_key_object_get_data(_key, nullptr);
   std::vector<uint8_t> buffer(len);
   rn_crypto_key_object_get_data(_key, buffer.data());
@@ -1063,21 +1063,21 @@ std::shared_ptr<ArrayBuffer> HybridKeyObject::extractData() {
 
 std::shared_ptr<ArrayBuffer> HybridKeyObject::exportKey(double format) {
   if (!_key)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
 
   // First call to get size (returns size or -1 on error)
   int32_t len =
       rn_crypto_key_object_export(_key, static_cast<int32_t>(format), nullptr);
   if (len < 0) {
     // Error or empty
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   }
 
   std::vector<uint8_t> buffer(len);
   int32_t res = rn_crypto_key_object_export(_key, static_cast<int32_t>(format),
                                             buffer.data());
   if (res < 0) {
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   }
   return ArrayBuffer::copy(buffer.data(), buffer.size());
 }
@@ -1086,10 +1086,10 @@ std::shared_ptr<ArrayBuffer> HybridKeyObject::exportKey(double format) {
 
 std::shared_ptr<ArrayBuffer> HybridKeyObject::getDhPrime() {
   if (!_key)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   int32_t len = rn_crypto_key_object_get_dh_prime(_key, nullptr);
   if (len <= 0)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   std::vector<uint8_t> buffer(len);
   rn_crypto_key_object_get_dh_prime(_key, buffer.data());
   return ArrayBuffer::copy(buffer.data(), buffer.size());
@@ -1097,10 +1097,10 @@ std::shared_ptr<ArrayBuffer> HybridKeyObject::getDhPrime() {
 
 std::shared_ptr<ArrayBuffer> HybridKeyObject::getDhGenerator() {
   if (!_key)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   int32_t len = rn_crypto_key_object_get_dh_generator(_key, nullptr);
   if (len <= 0)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   std::vector<uint8_t> buffer(len);
   rn_crypto_key_object_get_dh_generator(_key, buffer.data());
   return ArrayBuffer::copy(buffer.data(), buffer.size());
@@ -1119,7 +1119,7 @@ double HybridKeyObject::getRsaModulusBits() {
 
 std::shared_ptr<ArrayBuffer> HybridKeyObject::getRsaPublicExponent() {
   // TODO: Implement when RSA key details API is available in Rust
-  return ArrayBuffer::copy(nullptr, 0);
+  return ArrayBuffer::allocate(0);
 }
 
 std::string HybridKeyObject::getEcCurveName() {
@@ -1144,10 +1144,10 @@ HybridNodeCrypto::createKeyObjectFromRaw(
 
 std::shared_ptr<ArrayBuffer> HybridECDH::generateKeys() {
   if (!_ctx)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   size_t len = rn_crypto_ecdh_generate_keys(_ctx, nullptr);
   if (len == 0)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   std::vector<uint8_t> buffer(len);
   rn_crypto_ecdh_generate_keys(_ctx, buffer.data());
   return ArrayBuffer::copy(buffer.data(), buffer.size());
@@ -1156,11 +1156,11 @@ std::shared_ptr<ArrayBuffer> HybridECDH::generateKeys() {
 std::shared_ptr<ArrayBuffer>
 HybridECDH::computeSecret(const std::shared_ptr<ArrayBuffer> &otherPublicKey) {
   if (!_ctx || !otherPublicKey)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   size_t len = rn_crypto_ecdh_compute_secret(_ctx, otherPublicKey->data(),
                                              otherPublicKey->size(), nullptr);
   if (len == 0)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   std::vector<uint8_t> buffer(len);
   rn_crypto_ecdh_compute_secret(_ctx, otherPublicKey->data(),
                                 otherPublicKey->size(), buffer.data());
@@ -1169,10 +1169,10 @@ HybridECDH::computeSecret(const std::shared_ptr<ArrayBuffer> &otherPublicKey) {
 
 std::shared_ptr<ArrayBuffer> HybridECDH::getPrivateKey() {
   if (!_ctx)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   size_t len = rn_crypto_ecdh_get_private_key(_ctx, nullptr);
   if (len == 0)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   std::vector<uint8_t> buffer(len);
   rn_crypto_ecdh_get_private_key(_ctx, buffer.data());
   return ArrayBuffer::copy(buffer.data(), buffer.size());
@@ -1180,10 +1180,10 @@ std::shared_ptr<ArrayBuffer> HybridECDH::getPrivateKey() {
 
 std::shared_ptr<ArrayBuffer> HybridECDH::getPublicKey(bool compressed) {
   if (!_ctx)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   size_t len = rn_crypto_ecdh_get_public_key(_ctx, compressed, nullptr);
   if (len == 0)
-    return ArrayBuffer::copy(nullptr, 0);
+    return ArrayBuffer::allocate(0);
   std::vector<uint8_t> buffer(len);
   rn_crypto_ecdh_get_public_key(_ctx, compressed, buffer.data());
   return ArrayBuffer::copy(buffer.data(), buffer.size());
