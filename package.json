@@ -1,12 +1,13 @@
 {
   "name": "react-native-nitro-crypto",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "High-performance Node.js & Web Crypto for React Native, powered by Nitro Modules and Rust. Almost complete coverage of Node.js 24 crypto APIs.",
   "repository": {
     "type": "git",
     "url": "https://github.com/iwater/react-native-nitro-crypto.git"
   },
   "homepage": "https://github.com/iwater/react-native-nitro-crypto",
+  "type": "module",
   "main": "./lib/index.js",
   "module": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -23,7 +24,10 @@
     "build": "tsc",
     "prepare": "npm run build",
     "test": "jest",
-    "copy-clib": "rm -rf ios/Frameworks/RNCrypto.xcframework && mkdir -p ios/Frameworks && cp -R ../rust_c_crypto/target/xcframework/RNCrypto.xcframework ios/Frameworks/ && mkdir -p android/libs/arm64-v8a android/libs/armeabi-v7a android/libs/x86 android/libs/x86_64 && cp ../rust_c_crypto/target/universal/android/arm64-v8a/librn_node_crypto.so android/libs/arm64-v8a/ && cp ../rust_c_crypto/target/universal/android/armeabi-v7a/librn_node_crypto.so android/libs/armeabi-v7a/ && cp ../rust_c_crypto/target/universal/android/x86/librn_node_crypto.so android/libs/x86/ && cp ../rust_c_crypto/target/universal/android/x86_64/librn_node_crypto.so android/libs/x86_64/"
+    "copy-clib": "npm run copy-clib-ios && npm run copy-clib-android && npm run copy-clib-mac",
+    "copy-clib-ios": "rm -rf ios/Frameworks/RNCrypto.xcframework && mkdir -p ios/Frameworks && cp -R ../rust_c_crypto/target/xcframework/RNCrypto.xcframework ios/Frameworks/",
+    "copy-clib-android": "mkdir -p android/libs/arm64-v8a android/libs/armeabi-v7a android/libs/x86 android/libs/x86_64 && cp ../rust_c_crypto/target/universal/android/arm64-v8a/librn_node_crypto.so android/libs/arm64-v8a/ && cp ../rust_c_crypto/target/universal/android/armeabi-v7a/librn_node_crypto.so android/libs/armeabi-v7a/ && cp ../rust_c_crypto/target/universal/android/x86/librn_node_crypto.so android/libs/x86/ && cp ../rust_c_crypto/target/universal/android/x86_64/librn_node_crypto.so android/libs/x86_64/",
+    "copy-clib-mac": "mkdir -p mac && cp ../rust_c_crypto/target/release/librn_node_crypto.a mac/ && cp ../rust_c_crypto/include/rn_node_crypto.h cpp/"
   },
   "keywords": [
     "react-native",
@@ -35,7 +39,30 @@
     "performance",
     "pqc",
     "post-quantum",
-    "security"
+    "security",
+    "aes",
+    "rsa",
+    "ecdsa",
+    "ed25519",
+    "curve25519",
+    "sha256",
+    "sha512",
+    "sha3",
+    "hmac",
+    "pbkdf2",
+    "scrypt",
+    "argon2",
+    "hkdf",
+    "dh",
+    "ecdh",
+    "x509",
+    "certificate",
+    "chacha20",
+    "poly1305",
+    "mldsa",
+    "mlkem",
+    "kyber",
+    "dilithium"
   ],
   "author": "iwater <iwater@gmail.com>",
   "license": "ISC",
@@ -53,7 +80,7 @@
   },
   "packageManager": "yarn@4.12.0",
   "dependencies": {
-    "react-native-nitro-buffer": "^0.0.11"
+    "react-native-nitro-buffer": "~0.0.14"
   },
   "files": [
     "lib/",

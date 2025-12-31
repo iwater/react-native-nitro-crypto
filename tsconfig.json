@@ -1,23 +1,29 @@
 {
     "compilerOptions": {
-        "target": "es2020",
-        "module": "commonjs",
+        "target": "ES2020",
+        "module": "ESNext",
+        "moduleResolution": "node",
         "lib": [
-            "es2020"
+            "ES2020"
         ],
         "declaration": true,
-        "outDir": "./lib",
+        "declarationMap": true,
+        "outDir": "lib",
         "strict": true,
         "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "jsx": "react-native",
         "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "moduleResolution": "node"
+        "allowJs": true
     },
     "include": [
-        "src/**/*"
+        "src"
     ],
     "exclude": [
         "node_modules",
+        "lib",
         "**/*.test.ts"
     ]
 }

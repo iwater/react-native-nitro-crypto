@@ -19,7 +19,6 @@ Pod::Spec.new do |s|
   ]
   
   s.dependency "React-Core"
-  # s.dependency "react-native-nitro-modules"
   
   # Add vendored xcframework (Rust binary)
   s.vendored_frameworks = "ios/Frameworks/RNCrypto.xcframework"
