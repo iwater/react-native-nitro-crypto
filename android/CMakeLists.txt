@@ -11,6 +11,9 @@ add_library(${PACKAGE_NAME} SHARED
         OnLoad.cpp
 )
 
+# Force both hash styles (sysv and gnu) for Android loader compatibility
+target_link_options(${PACKAGE_NAME} PRIVATE "-Wl,--hash-style=both")
+
 # Include paths for our headers
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/../cpp

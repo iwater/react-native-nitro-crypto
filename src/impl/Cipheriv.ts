@@ -3,33 +3,47 @@ import { native } from '../native'
 import type { HybridCipher, HybridDecipher } from '../specs/NitroNodeCrypto.nitro'
 import { toArrayBuffer } from './utils'
 
+/**
+ * Safely convert a Buffer, TypedArray, or ArrayBuffer to a pure ArrayBuffer.
+ * This handles cross-module Buffer instances where Buffer.isBuffer() may fail.
+ */
+function ensureArrayBuffer(input: Buffer | ArrayBuffer | ArrayBufferView): ArrayBuffer {
+    if (input instanceof ArrayBuffer) return input
+    if (ArrayBuffer.isView(input)) {
+        return input.buffer.slice(input.byteOffset, input.byteOffset + input.byteLength) as ArrayBuffer
+    }
+    return input as ArrayBuffer
+}
+
 export type CipherAlgorithm = 'aes-128-cbc' | 'aes-192-cbc' | 'aes-256-cbc' | 'aes-128-ctr' | 'aes-192-ctr' | 'aes-256-ctr' | 'aes-128-gcm' | 'aes-256-gcm'
 
 export class Cipheriv {
     private nativeCipher: HybridCipher
 
     constructor(algorithm: CipherAlgorithm, key: Buffer | ArrayBuffer, iv: Buffer | ArrayBuffer) {
-        const keyAb = Buffer.isBuffer(key) ? key.buffer.slice(key.byteOffset, key.byteOffset + key.byteLength) : key
-        const ivAb = Buffer.isBuffer(iv) ? iv.buffer.slice(iv.byteOffset, iv.byteOffset + iv.byteLength) : iv
+        const keyAb = ensureArrayBuffer(key)
+        const ivAb = ensureArrayBuffer(iv)
         this.nativeCipher = native.createCipheriv(algorithm, keyAb, ivAb)
     }
 
-    update(data: string | Buffer | ArrayBuffer, inputEncoding?: BufferEncoding, outputEncoding?: 'hex' | 'base64'): Buffer | string {
+    update(data: string | Buffer | ArrayBuffer, inputEncoding?: BufferEncoding, outputEncoding?: 'hex' | 'base64' | 'utf8' | 'utf-8'): Buffer | string {
         const dataAb = toArrayBuffer(data, inputEncoding)
         const resultAb = this.nativeCipher.update(dataAb)
         const resultBuf = Buffer.from(resultAb)
 
         if (outputEncoding === 'hex') return resultBuf.toString('hex')
         if (outputEncoding === 'base64') return resultBuf.toString('base64')
+        if (outputEncoding === 'utf8' || outputEncoding === 'utf-8') return resultBuf.toString('utf8')
         return resultBuf
     }
 
-    final(outputEncoding?: 'hex' | 'base64'): Buffer | string {
+    final(outputEncoding?: 'hex' | 'base64' | 'utf8' | 'utf-8'): Buffer | string {
         const resultAb = this.nativeCipher.final()
         const resultBuf = Buffer.from(resultAb)
 
         if (outputEncoding === 'hex') return resultBuf.toString('hex')
         if (outputEncoding === 'base64') return resultBuf.toString('base64')
+        if (outputEncoding === 'utf8' || outputEncoding === 'utf-8') return resultBuf.toString('utf8')
         return resultBuf
     }
 
@@ -62,27 +76,29 @@ export class Decipheriv {
     private nativeDecipher: HybridDecipher
 
     constructor(algorithm: CipherAlgorithm, key: Buffer | ArrayBuffer, iv: Buffer | ArrayBuffer) {
-        const keyAb = Buffer.isBuffer(key) ? key.buffer.slice(key.byteOffset, key.byteOffset + key.byteLength) : key
-        const ivAb = Buffer.isBuffer(iv) ? iv.buffer.slice(iv.byteOffset, iv.byteOffset + iv.byteLength) : iv
+        const keyAb = ensureArrayBuffer(key)
+        const ivAb = ensureArrayBuffer(iv)
         this.nativeDecipher = native.createDecipheriv(algorithm, keyAb, ivAb)
     }
 
-    update(data: string | Buffer | ArrayBuffer, inputEncoding?: BufferEncoding, outputEncoding?: 'hex' | 'base64'): Buffer | string {
+    update(data: string | Buffer | ArrayBuffer, inputEncoding?: BufferEncoding, outputEncoding?: 'hex' | 'base64' | 'utf8' | 'utf-8'): Buffer | string {
         const dataAb = toArrayBuffer(data, inputEncoding)
         const resultAb = this.nativeDecipher.update(dataAb)
         const resultBuf = Buffer.from(resultAb)
 
         if (outputEncoding === 'hex') return resultBuf.toString('hex')
         if (outputEncoding === 'base64') return resultBuf.toString('base64')
+        if (outputEncoding === 'utf8' || outputEncoding === 'utf-8') return resultBuf.toString('utf8')
         return resultBuf
     }
 
-    final(outputEncoding?: 'hex' | 'base64'): Buffer | string {
+    final(outputEncoding?: 'hex' | 'base64' | 'utf8' | 'utf-8'): Buffer | string {
         const resultAb = this.nativeDecipher.final()
         const resultBuf = Buffer.from(resultAb)
 
         if (outputEncoding === 'hex') return resultBuf.toString('hex')
         if (outputEncoding === 'base64') return resultBuf.toString('base64')
+        if (outputEncoding === 'utf8' || outputEncoding === 'utf-8') return resultBuf.toString('utf8')
         return resultBuf
     }
 

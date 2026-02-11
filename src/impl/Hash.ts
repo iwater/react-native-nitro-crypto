@@ -16,10 +16,13 @@ export class Hash {
         if (typeof data === 'string') {
             const buf = Buffer.from(data, inputEncoding || 'utf8')
             ab = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength)
-        } else if (Buffer.isBuffer(data)) {
-            ab = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength)
-        } else {
+        } else if (data instanceof ArrayBuffer) {
             ab = data
+        } else if (ArrayBuffer.isView(data)) {
+            // Handles Buffer, Uint8Array, and any other TypedArray
+            ab = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength) as ArrayBuffer
+        } else {
+            ab = data as ArrayBuffer
         }
         this.chunks.push(ab)
         return this

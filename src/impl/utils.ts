@@ -21,12 +21,11 @@ export function binaryLikeToArrayBuffer(data: BinaryLike | Buffer | ArrayBuffer,
     if (typeof data === 'string') {
         const buf = Buffer.from(data, encoding || 'utf8')
         return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer
-    } else if (Buffer.isBuffer(data)) {
-        return data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength) as ArrayBuffer
-    } else if (ArrayBuffer.isView(data)) {
-        return data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength) as ArrayBuffer
     } else if (data instanceof ArrayBuffer) {
         return data
+    } else if (ArrayBuffer.isView(data)) {
+        // Handles Buffer, Uint8Array, and any other TypedArray (including cross-module instances)
+        return data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength) as ArrayBuffer
     }
     return data as ArrayBuffer
 }
@@ -35,9 +34,10 @@ export function toArrayBuffer(data: string | Buffer | ArrayBuffer | ArrayBufferV
     if (typeof data === 'string') {
         const buf = Buffer.from(data, encoding || 'utf8')
         return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer
-    } else if (Buffer.isBuffer(data)) {
-        return data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength) as ArrayBuffer
+    } else if (data instanceof ArrayBuffer) {
+        return data
     } else if (ArrayBuffer.isView(data)) {
+        // Handles Buffer, Uint8Array, and any other TypedArray (including cross-module instances)
         return data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength) as ArrayBuffer
     } else {
         return data
@@ -46,9 +46,8 @@ export function toArrayBuffer(data: string | Buffer | ArrayBuffer | ArrayBufferV
 
 export function prepareBuffer(buffer: Buffer | ArrayBuffer | ArrayBufferView | string): ArrayBuffer {
     if (typeof buffer === 'string') return toArrayBuffer(Buffer.from(buffer))
-    if (buffer instanceof Buffer) return toArrayBuffer(buffer)
     if (buffer instanceof ArrayBuffer) return buffer
-    // ArrayBufferView (Uint8Array, DataView, etc.)
+    // Handles Buffer, Uint8Array, and any other TypedArray (including cross-module instances)
     if (ArrayBuffer.isView(buffer)) {
         return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer
     }
