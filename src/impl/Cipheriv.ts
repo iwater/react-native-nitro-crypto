@@ -17,12 +17,40 @@ function ensureArrayBuffer(input: Buffer | ArrayBuffer | ArrayBufferView): Array
 
 export type CipherAlgorithm = 'aes-128-cbc' | 'aes-192-cbc' | 'aes-256-cbc' | 'aes-128-ctr' | 'aes-192-ctr' | 'aes-256-ctr' | 'aes-128-gcm' | 'aes-256-gcm'
 
+function expectedAesKeyLength(algorithm: string): number | null {
+    if (algorithm.startsWith('aes-128-')) return 16
+    if (algorithm.startsWith('aes-192-')) return 24
+    if (algorithm.startsWith('aes-256-')) return 32
+    return null
+}
+
+function validateCipherParams(algorithm: string, keyAb: ArrayBuffer, ivAb: ArrayBuffer): void {
+    const keyLen = keyAb.byteLength
+    const ivLen = ivAb.byteLength
+    const expectedKeyLen = expectedAesKeyLength(algorithm)
+
+    if (expectedKeyLen !== null && keyLen !== expectedKeyLen) {
+        throw new Error(`Invalid key length: expected ${expectedKeyLen} bytes, got ${keyLen}`)
+    }
+
+    if (algorithm.endsWith('-cbc') || algorithm.endsWith('-ctr')) {
+        if (ivLen !== 16) {
+            throw new Error(`Invalid IV length for ${algorithm}: expected 16 bytes, got ${ivLen}`)
+        }
+    } else if (algorithm.endsWith('-gcm')) {
+        if (ivLen <= 0) {
+            throw new Error(`Invalid IV length for ${algorithm}: expected > 0 bytes, got ${ivLen}`)
+        }
+    }
+}
+
 export class Cipheriv {
     private nativeCipher: HybridCipher
 
     constructor(algorithm: CipherAlgorithm, key: Buffer | ArrayBuffer, iv: Buffer | ArrayBuffer) {
         const keyAb = ensureArrayBuffer(key)
         const ivAb = ensureArrayBuffer(iv)
+        validateCipherParams(algorithm, keyAb, ivAb)
         this.nativeCipher = native.createCipheriv(algorithm, keyAb, ivAb)
     }
 
@@ -78,6 +106,7 @@ export class Decipheriv {
     constructor(algorithm: CipherAlgorithm, key: Buffer | ArrayBuffer, iv: Buffer | ArrayBuffer) {
         const keyAb = ensureArrayBuffer(key)
         const ivAb = ensureArrayBuffer(iv)
+        validateCipherParams(algorithm, keyAb, ivAb)
         this.nativeDecipher = native.createDecipheriv(algorithm, keyAb, ivAb)
     }
 

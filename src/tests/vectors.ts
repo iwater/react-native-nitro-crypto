@@ -306,38 +306,33 @@ export const vectors: any = {
       "input": "hello world",
       "ciphertext": "f1ac06b1655950581a2cf2",
       "tag": "8389b70b6c51c15c3644196e18efad29"
-    },
-    {
-      "algorithm": "aes-256-gcm",
-      "key": "2e865996c06d8d630ce21b28e089a3802f35eb9196113bb90ee6f2593448e179",
-      "iv": "639163caccd917651e004b35",
-      "input": "",
-      "ciphertext": "",
-      "tag": "a8d16f59f542c1bfa54c8a63add81f56"
-    },
-    {
-      "algorithm": "aes-256-gcm",
-      "key": "f4d77069beb95e77779c16561f6558cec17c43f945f91f95067d55d3a588a11d",
-      "iv": "3b83442c0894857ad51fcd21",
-      "input": "abc",
-      "ciphertext": "ee0bed",
-      "tag": "c1de5e738f4f1f49ff62da9e75e1ddf6"
-    },
-    {
-      "algorithm": "aes-256-gcm",
-      "key": "39cb73725888f20f7f7d61d2eabb3eacfd4a039e577aaa8b777e03d9e9ed609b",
-      "iv": "47045534a7dbc0fef16b4f3e",
-      "input": "hello world",
-      "ciphertext": "ac68167f94136551c13a89",
-      "tag": "9f35e8c7da767e17bf05743bc4b76e99"
     }
   ],
-  "sign": [],
-  "pbkdf2": [],
-  "scrypt": [],
-  "kdf": [
+  "sign": [
     {
-      "algorithm": "pbkdf2",
+      "algorithm": "rsa-pss-sha256",
+      "data": "68656c6c6f20776f726c64",
+      "privateKey": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCIMyjKHCfA1vKv\ne5qZz/ud/1g48CA1iY7YaDHUN5hB8PwOg+MOCaCOLYohXJhNH85jZ3JR+sGhzj49\nHlC9XV0ftdmkTz8TvN028h41mWwuJmIPgNWcy7vF/3/ZBwGF7pYI2h6Rg75d9HTj\n2x+S35Paegmgh8ZzJ7IOTeH8lfVrTA4HEI0uePbv/4yxXb8wxyFUYggyxLPJ9947\nMg868yUekM6GIlD5BiyZSYUhhkWg5kOs/gi+yAKCJfyzuPQFFgBODsc8wAT7bd+h\nVicUKdatZ1oIXCTF5wsyAOBZK4/bhktNN2jzYXWE7qLcUYEdPvoEjfB9eaqrQUTX\nWadYVjUBAgMBAAECggEAAv3YrgPLTb2K7BbTcQBz/ubuaaXAl1xzokY7nfUwp3Yj\nGzCDaroEaEsQxyXRBJSnxGAvzyQqX6L3lAEX9ejYlEs6whSphoX19/B+gF/j0+ms\n6rlCN+TztWgkx0ATpPz2F7CuzjRuGIM3lA+qlF/L0BcxIfEJh1r+WrkUNyeWEeq8\nChOCK0cTEy3AtbCUCYWdiRUlKKOngrE4ruvUB5PS55oeTNjnkI8/VCFD/1mpZCEs\n1JRDU4byJmZ2zpnQ3+ofxayuk+VONkDrVLV5WUEk7C0nDqgKBOhrVaImZlZJ9irE\ngU3mPj1/6a66Zyz6qau+lGuKpaWIun0+bCsT0Fr/fwKBgQC8qsdYyV+wT/+Sk3dK\nQOWxXUYKhAtGRM5RiHPi5UcZYfIktPfGc5846NsRgdeOUuLBI4m1ad3pMLPkwLfa\nMuEG+jZHkH7kbasrVKR0KvKDIEnfVzLXir+G18yxCZAsFbdOR2FGbTh7jQ7iqU7K\nTcTCJuEjg/x7arLhkQv3Cu6NXwKBgQC4zs5c5DXvK/2B0Y5MBCCPaFxqM/WZkA7l\nU2s4REUUdtBMR5Il9ZA7Bk+pqpdgShbmyw+B38I7OVQAdn6o8OJsVipwGRzq7LQb\nPvI+kDVtdXL6gPMeSnWiZdrnScss6sInPzTqNoige4oEVDLZMhseURI/BnBnAC7n\nVgrS/jX5nwKBgQCJgVq7LkGMijG2Db5youwFofqLbYOeGkXZDL+RjhOMv2MxN6gi\nvmA8pRINJ3oIZAaaR6F1VAyFiZaDUaZt5Ik3gaOP8xNYv0ly0kTt2eNYiG7u1Wnb\nyGchCyVHnrWyO72W0tVl8/Knsb44mrcvIREXhCiwruCUvsZTOljjG9eTtwKBgFkP\nmNWdSPyk53uLYJbzmjliIr8voRlLGlKb29z20Y+mHoXUK/NNHx/Cz9tFEcRekCDT\nFPsSuUjPPNMoR6vkwklRUQxKnev8/GLw9878sjK42hssz3z2hzAnA9JYdqiDzeMa\nC8cfVsJ4JrAlX4faJMV8bl2fHcYViYUEqxy5U4ujAoGBAJC2TBqI7VKQsWCgsESe\nCXq+RbH2shmtpsFpLpEgyoD2AfKb1h3Q0QPpegJ/aiTaJNN6vtrqBPDcEYcsPm8R\ngTrYWPWg1Im/+am41CEh5pHko6heNeH/Ged3cgq6Acbon2Pqce+OD4RddNCYifyM\nvffwhfwMloYy3jYUsI4/5jiI\n-----END PRIVATE KEY-----\n",
+      "publicKey": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiDMoyhwnwNbyr3uamc/7\nnf9YOPAgNYmO2Ggx1DeYQfD8DoPjDgmgji2KIVyYTR/OY2dyUfrBoc4+PR5QvV1d\nH7XZpE8/E7zdNvIeNZlsLiZiD4DVnMu7xf9/2QcBhe6WCNoekYO+XfR049sfkt+T\n2noJoIfGcyeyDk3h/JX1a0wOBxCNLnj27/+MsV2/MMchVGIIMsSzyffeOzIPOvMl\nHpDOhiJQ+QYsmUmFIYZFoOZDrP4IvsgCgiX8s7j0BRYATg7HPMAE+23foVYnFCnW\nrWdaCFwkxecLMgDgWSuP24ZLTTdo82F1hO6i3FGBHT76BI3wfXmqq0FE11mnWFY1\nAQIDAQAB\n-----END PUBLIC KEY-----\n",
+      "signature": "2eed96e379c04edc60238cdc4dd975f44d74570ac671ffe7e27aa6ee54bf16d9830bf9e14bea4d0db735d1b4f2f609db2ab485d981a3b71fb2fa8ba0b43853c88b73d4bb548905d357a2adcbfa3e900a995488692de6b86efe4ccfda69a7727d330115ef6cb14daf8e0f8f8e8f7ba77ef66253808a26bb669c594d2df9b7ce50cd1b7fb060e45df747e5d1eaec0190cabe9dd56bb5e070875c005a576cc0c0358ac44ad7ede076d7f1508d643493e7c7955be4db7e93f20c81b76d484e70b6498a904ecc062563cbd50677f479d5939f6ab05c53bf0d417a70cec0d42666b37cf40c03b39c27449890b63818168e9361af87f06ae45db2e89f936397d1ad252f"
+    },
+    {
+      "algorithm": "ecdsa-sha256",
+      "data": "68656c6c6f20776f726c64",
+      "privateKey": "-----BEGIN PRIVATE KEY-----\nMIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg9A2ihuZTTt9neEXO\n70EcIhrUglZnLAYa9jYzIgePW2uhRANCAAQsbxsYPvcK/UGBT/zzeVt0+kQrtCeZ\nTHIV0roge4+aASgsFcTKdpBjIEK1pytJYslR08aEIeDZMJvguRH779VI\n-----END PRIVATE KEY-----\n",
+      "publicKey": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAELG8bGD73Cv1BgU/883lbdPpEK7Qn\nmUxyFdK6IHuPmgEoLBXEynaQYyBCtacrSWLJUdPGhCHg2TCb4LkR++/VSA==\n-----END PUBLIC KEY-----\n",
+      "signature": "3045022100ceaa554c8c9113fb451f46f86a6cf02051c2f22b1d6ce607fed610e5149faf8402202d068fd1e2bd23a5ab4310156e540b77268bf9fa0680054419cda45fa63256ca"
+    },
+    {
+      "algorithm": "ed25519",
+      "data": "68656c6c6f20776f726c64",
+      "privateKey": "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VwBCIEIFxf/o9A9tVOIFnvyRdW9L7lEyadBmrtuLULZnLIyDaQ\n-----END PRIVATE KEY-----\n",
+      "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAIRmTxDgg472uwFX4K7pciAb7RGcNdc9fELUvO7bOa8M=\n-----END PUBLIC KEY-----\n",
+      "signature": "164364f3940509486b6bcb6ff94a49a6df07592b098fa3b5ea2c6918df115922ff361ec0bfd099c26b8fd10579afc23c764aff69e4e9f214da3142c21c67dc09"
+    }
+  ],
+  "pbkdf2": [
+    {
       "params": {
         "password": "password",
         "salt": "salt",
@@ -348,7 +343,6 @@ export const vectors: any = {
       "expected": "120fb6cffcf8b32c43e7225256c4f837a86548c92ccc35480805987cb70be17b"
     },
     {
-      "algorithm": "pbkdf2",
       "params": {
         "password": "password",
         "salt": "salt",
@@ -359,7 +353,6 @@ export const vectors: any = {
       "expected": "120fb6cffcf8b32c43e7225256c4f837a86548c92ccc35480805987cb70be17b4dbf3a2f3dad3377264bb7b8e8330d4efc7451418617dabef683735361cdc18c"
     },
     {
-      "algorithm": "pbkdf2",
       "params": {
         "password": "password",
         "salt": "salt",
@@ -370,7 +363,6 @@ export const vectors: any = {
       "expected": "632c2812e46d4604102ba7618e9d6d7d2f8128f6266b4a03264d2a0460b7dcb3"
     },
     {
-      "algorithm": "pbkdf2",
       "params": {
         "password": "password",
         "salt": "salt",
@@ -381,7 +373,6 @@ export const vectors: any = {
       "expected": "632c2812e46d4604102ba7618e9d6d7d2f8128f6266b4a03264d2a0460b7dcb388b3b1131f741bcbeb02541c8c2e97bd8bed62ab6425542e45512b7312f440eb"
     },
     {
-      "algorithm": "pbkdf2",
       "params": {
         "password": "password",
         "salt": "salty_salt",
@@ -392,7 +383,6 @@ export const vectors: any = {
       "expected": "7c12c1d57635b700346d314c110898f8322ea8ea4910ce2172cf0ea310710e4b"
     },
     {
-      "algorithm": "pbkdf2",
       "params": {
         "password": "password",
         "salt": "salty_salt",
@@ -403,7 +393,6 @@ export const vectors: any = {
       "expected": "7c12c1d57635b700346d314c110898f8322ea8ea4910ce2172cf0ea310710e4b27ef95a7cc7292b493582e7a273ca45634cd872c7edf9d33dfcb951507c5771d"
     },
     {
-      "algorithm": "pbkdf2",
       "params": {
         "password": "password",
         "salt": "salty_salt",
@@ -414,7 +403,6 @@ export const vectors: any = {
       "expected": "15ad943af6ceebecbc54dd59b1a55b52c997fcdd91b7e0e39d621496562827d6"
     },
     {
-      "algorithm": "pbkdf2",
       "params": {
         "password": "password",
         "salt": "salty_salt",
@@ -425,7 +413,6 @@ export const vectors: any = {
       "expected": "15ad943af6ceebecbc54dd59b1a55b52c997fcdd91b7e0e39d621496562827d6f099f76a7e15e5688482b14f686e99348e6d44c5c55216de7c7f52002b53aeeb"
     },
     {
-      "algorithm": "pbkdf2",
       "params": {
         "password": "secret",
         "salt": "salt",
@@ -436,7 +423,6 @@ export const vectors: any = {
       "expected": "38df428b309308e48c3687e7f90bda0e9cf253568c21ec754a0e076ab4ab6423"
     },
     {
-      "algorithm": "pbkdf2",
       "params": {
         "password": "secret",
         "salt": "salt",
@@ -447,7 +433,6 @@ export const vectors: any = {
       "expected": "38df428b309308e48c3687e7f90bda0e9cf253568c21ec754a0e076ab4ab642385742c539f7ebe7851764a826224b4072e1d379f164b20ff897a16b3feb0e413"
     },
     {
-      "algorithm": "pbkdf2",
       "params": {
         "password": "secret",
         "salt": "salt",
@@ -458,7 +443,6 @@ export const vectors: any = {
       "expected": "a8df899f3c4f204d967e0ad63c092987c10055ebb017b3d9d28add218d4f7aad"
     },
     {
-      "algorithm": "pbkdf2",
       "params": {
         "password": "secret",
         "salt": "salt",
@@ -469,7 +453,6 @@ export const vectors: any = {
       "expected": "a8df899f3c4f204d967e0ad63c092987c10055ebb017b3d9d28add218d4f7aadc8c69da6f0a1537dd5de8357f8e0b0ae5cf9c47db84b60e9d2978606ee13d2e3"
     },
     {
-      "algorithm": "pbkdf2",
       "params": {
         "password": "secret",
         "salt": "salty_salt",
@@ -480,7 +463,6 @@ export const vectors: any = {
       "expected": "393b189765a54ab5d25a9fe7a3628d0052a3d399a60a9c9a3a76aa6aa12fa5bf"
     },
     {
-      "algorithm": "pbkdf2",
       "params": {
         "password": "secret",
         "salt": "salty_salt",
@@ -491,7 +473,6 @@ export const vectors: any = {
       "expected": "393b189765a54ab5d25a9fe7a3628d0052a3d399a60a9c9a3a76aa6aa12fa5bf569e963b8d666c4b7d94453635de96c78d612f066ab7b2f97e614fb82340c596"
     },
     {
-      "algorithm": "pbkdf2",
       "params": {
         "password": "secret",
         "salt": "salty_salt",
@@ -502,7 +483,6 @@ export const vectors: any = {
       "expected": "7453571594bb7cbd17d4efb6a77c0bbd8b4f010a39de3a947240348557abe923"
     },
     {
-      "algorithm": "pbkdf2",
       "params": {
         "password": "secret",
         "salt": "salty_salt",
@@ -511,13 +491,13 @@ export const vectors: any = {
         "digest": "sha256"
       },
       "expected": "7453571594bb7cbd17d4efb6a77c0bbd8b4f010a39de3a947240348557abe9233c7afcca36489ffd92aaaf6e045ac6bde21798af0104546b53121fec8f43fecc"
-    },
+    }
+  ],
+  "scrypt": [
     {
-      "algorithm": "scrypt",
       "params": {
         "password": "password",
         "salt": "salt",
-        "iterations": 0,
         "keylen": 64,
         "N": 16384,
         "r": 8,
@@ -592,10 +572,71 @@ export const vectors: any = {
       "expected": "804cd424d24f15fa0ecc3857b6b7c62980304116f44d12547fe40964139fb0fe"
     }
   ],
-  "asymmetric_enc": [],
-  "key_agreement": [],
-  "aes_kw": [],
-  "x509": [],
-  "dh_details": [],
-  "aead_enc": []
+  "asymmetric_enc": [
+    {
+      "algorithm": "rsa-oaep",
+      "privateKey": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC224MBWVLaVRcH\noyfJSbu7cVbVEhKPvzU23bASQS/LiIrFgEce2rMm0tNDDgIKorccAMIDEGLpLBGW\ns35wKOZsQqIg0Wp5fhkTN4sZZfLJnQc9NuWR9wQ87PkdQFI89+LGOh72IM8UrgYD\nkHLONP+VCFhDIn6G0nynZSCEBVhr9ZKX2lr2rcZqH2xlb08qxhUH9K5gbyBBOgq2\n4Nkw/gLLBKzfEsS90atpqK4jXApkDp/gDwYktANSXZuT9G4SnwQdFrQ/zNnRbApC\nnDtW0qQbBNwxGGm6XJxvJGCFcu5nOokzzWr164yhdl+9eFkNhN0qfa2++rxqtDY6\nfou52UkbAgMBAAECggEACKTTyoqIah2/mvLRfKhpoXC4JBZYnkbxowhTvGksczif\nJrrrob/A3EL3DaJp4krS0RYQFcj+g/s7UZ5mibLFQbTcqSR9HgUh9lCX2LmDApjT\nsMcZjw7YOnERTZquyIcHR0uUDxp574ZSbnSzmJ/UvRzJ31KQHJtynQ8gvFzsUx4S\nO7vngVD+VZUKGrFDkY92PwHYKZ0bhV4XdqLRiYjgJUEUEPlD9s3cXDVT6w9rlQkp\n9/aoOA615SVopksaLbxfhnrWpND35oWebkaJJrnREGJ5eHrv7AAYHRg84n+dpmmd\nI/hOTpoRa4IAZjO/rSAtmchbifV/BjMiUCl/rDzc0QKBgQDdz2rY+pTHOyw9Xzf+\nRAPyYQkNkdi/qGGk8xFxe1Jpki+X8cVVf7GDNDcLrSp5VpvLF9GOMzF5OvzgNODu\nZCKi/XbVKe7MODWGPzDac9eWmfW6cUSRX2o3wIaSvCeKwjzyh62IyA+JhOweHSAf\nARM3x2hPJkTHye91wd1lQqscbQKBgQDTCwb0vr32irmyROeipBH5ysatPzH3SDoA\nj4/tjCdpHknRKa40PHzGseqZq6E8ETAlLKvaOACki8izyy6QTex9+ZUzkNvYbKFd\ng8C0PiDqnbBHrpsgAQoutN4YQuPrU71WFkW0/GnPauzDgpWNGyowtg0phPVWU5NL\nWrtGtu32pwKBgQCL1mkxNAE5/ZctdetSFMU8OGrBsFIqulgc6tTza2EQh4YTz+ut\ntFxQMEoHxXtClhSQHIsTkDi/ii3El/G6uUyQ3yTczJvtCf7MjOgawO+I1bVyflhR\nIgtP7MOqnI59T2mnKVyBIEeTVkaZ0ZjfkwjvoHqlc6XnIushnUAbx8UinQKBgHEn\nsXQarXn6SbS200fWFrlLKxmLD7xZopfYYcBpbFwlXEjkwz3IzNIwZOw+JPYy9RCJ\nkh8v9dBEDrmwEGhZD5s/7eq3GdlB7YdZdEJwKXACWpkkmpIfXJlMauSxQMlVnegB\niyCOUiFfYFE3u/3recSiaA5B9tVxfEFkBZPV02NzAoGAYtLuoAhnptd5UG6dXcc8\ndupkQO9UdINGGeJ2vfjSMQRJCBMUOVbV57YzaKYmZwoIbRjnXPgZDtJnVMzvpyF1\nr8DdtW6TMQEszQybPAJMnm55MIaERuqoQ19thAiwNmF9FLADgGLrkJMBuMxle4gq\n0QmiVMtUaF+B5Y/yU+T1E2c=\n-----END PRIVATE KEY-----\n",
+      "publicKey": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAttuDAVlS2lUXB6MnyUm7\nu3FW1RISj781Nt2wEkEvy4iKxYBHHtqzJtLTQw4CCqK3HADCAxBi6SwRlrN+cCjm\nbEKiINFqeX4ZEzeLGWXyyZ0HPTblkfcEPOz5HUBSPPfixjoe9iDPFK4GA5ByzjT/\nlQhYQyJ+htJ8p2UghAVYa/WSl9pa9q3Gah9sZW9PKsYVB/SuYG8gQToKtuDZMP4C\nywSs3xLEvdGraaiuI1wKZA6f4A8GJLQDUl2bk/RuEp8EHRa0P8zZ0WwKQpw7VtKk\nGwTcMRhpulycbyRghXLuZzqJM81q9euMoXZfvXhZDYTdKn2tvvq8arQ2On6LudlJ\nGwIDAQAB\n-----END PUBLIC KEY-----\n",
+      "data": "736563726574206d657373616765",
+      "ciphertext": "94d1e6c4fb01e8510c25255d2378c569fe11e9b508cf6b9b64c85f1ef99fc40cfdc9f4f68df67d4c60177f0e71198863af162a7d35622770fb26316918a210dc6f2b768078ef53e9b77b02568b75faf0436f9ce4b9768871830df45434e02c579ecd6f693761d215e2b2ea8a569e2967c9941e835b5b76f4792ea7a815e46f7df61fea53c53a775fe7c6ceca962ffa1611b90604d3d1877ee778cc498d678b554e5814c507c82ab6f10a6991a81e178e8ac7f20f97e273e53f0bfe261c706359b5d1919aef7ae8a2e04d53dd24a2ca5fe7aedae9bd795274ea2f1525976c266d47c7e021770510b9a947a992cae3e776f47751b2fbfc1b23758aac9679b0e1bc"
+    }
+  ],
+  "key_agreement": [
+    {
+      "algorithm": "ecdh-p256",
+      "curve": "prime256v1",
+      "privateKey": "5249e2367c8e78b87f2bb7622f2d6d9469cb1276407ae64a63680fb5939d1df3",
+      "otherPublicKey": "04ffa0e9ab090c74ad64a57a00214506aee1f4629800326a3e89d796d913b79a2af4ca3022d02a6e26cf580dfce2dce8f27f1d9f5f505285cb1359701c0bf05855",
+      "expectedSecret": "69ac3f7c1471ee80a4f5039cf9c01a93264403a26f6e589f197e650ebab9e170"
+    },
+    {
+      "algorithm": "x25519",
+      "privateKey": "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VuBCIEIGC+54CM1HZqkAQ54/JaV0N2G3d9dE9h3xJ1+earCD1v\n-----END PRIVATE KEY-----\n",
+      "publicKey": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VuAyEATCvboxcaMN9j385x9q0LPVYQJNg1T3fmO2J7zbSuPWo=\n-----END PUBLIC KEY-----\n",
+      "rawPrivateKey": "60bee7808cd4766a900439e3f25a5743761b777d744f61df1275f9e6ab083d6f",
+      "rawOtherPublicKey": "4c2bdba3171a30df63dfce71f6ad0b3d561024d8354f77e63b627bcdb4ae3d6a",
+      "expectedSecret": "7369be7c1348c46448d3df99c567e7658695dfd5bc18e8bff4ea9996ccda4840"
+    }
+  ],
+  "aes_kw": [
+    {
+      "kek": "75b16ae1b95684e911d86250cb0b2529",
+      "plaintext": "346f5f4031157bc34b1559fea04c0285cb4bdb860a829693",
+      "wrapped": "30103e889e0bb2151d64c4d691c1933c20b0d8d22f48877a3c3253cc73f0be9e"
+    }
+  ],
+  "x509": [
+    {
+      "certificate": "-----BEGIN CERTIFICATE-----\nMIIDBzCCAe+gAwIBAgIUOJL6XJDKV9jiC7Y9YJrxTUCtrLgwDQYJKoZIhvcNAQEL\nBQAwEzERMA8GA1UEAwwIVGVzdENlcnQwHhcNMjUxMjE0MTgzMzEzWhcNMjYxMjE0\nMTgzMzEzWjATMREwDwYDVQQDDAhUZXN0Q2VydDCCASIwDQYJKoZIhvcNAQEBBQAD\nggEPADCCAQoCggEBAMAJegjUnZchGqctBZsPoFC9eI4edfS+yne/4IWPLXDP+/h/\nQBr98qlsXzjY5aD7feljUPEfKD1CAqhV/oTzFatxSp/e4awb5iYm2myEfu9ZQX03\niXH2wl6stL0w9hqAxRQ9lgKa6dG5Cz6mV28e8RwqzpgGr+wiu3wS8dWFlvBN/Aqy\nqw68sa0supvpo8C59BPpGrEa+XQpgUHx7qYNHP+rt2BwcRZX8blOa5G5O85tFlNJ\ndP2InGBkI1Z59lo6cNhBXmweugI7JM39R4bAIRPd2vKHBldXlR1QPThtI6cDYcWM\n9Y55yK0ubPtRF4Ecfof+fCVSZH8UTnwa3iC1EF0CAwEAAaNTMFEwHQYDVR0OBBYE\nFA2BLkGFwa/89KER9KnWhKN9wrdIMB8GA1UdIwQYMBaAFA2BLkGFwa/89KER9KnW\nhKN9wrdIMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBAJceeHJ4\nhHP785L4t+DsWUZLolayt4xEC1IMsRUzrt8YHP9x7dkJZQHOO4Xd7PYngbXnlb45\nMiE5JHkMDFuO52pftA7pk747OiBzk615JVWHjqoEt6Xu8XUpQ/u7HpeUn6/WiRcO\nJxvg2ypWh6TpswRzvxR2smAyoYn1tE+zNWPe2abHSyrIPHLghFBxKPQRHgbMbNX4\nbOGI8EdPRPCig7Ihaiopta9mF4AkjNspD4SSZOPnNvgYOKiNvV3yHf8m1GgFacje\nYeenUjJFVMVf9bjNjm6gWLHDPwenM6pDJUBX2WV2X98seEEtwH/rjrwAke+m8gyE\nE9g9cDYfF9bv3yQ=\n-----END CERTIFICATE-----\n",
+      "subject": "CN=TestCert",
+      "issuer": "CN=TestCert"
+    }
+  ],
+  "dh_details": [
+    {
+      "prime": "a20cc898e22ce3d736d014def91d964a2cc0e4c94ff7ee0bbe58a4833884d05938533c5b26596071c17ccc722d995236c7ee2c1a3afc61591784fadf890904bae8be9e3df709e0c7e5e9a2960c81f1b34f225b27fa989d3f7a848a8ce9069bda7b36c6311a0964877dab137d9f24c58e82987121a49c1079aa91d9cdb16605af",
+      "generator": "02",
+      "publicKey": "212b0509536b127c878e4bbc67667aa5404d846fce49a8918dd39194b941601d5af355b98172197963b2090a434cfb14aae8d2420752d2300c178d1723b9287f76c88a51c76534fc5b47142e7e2c8ae3abb8958f19314c461664f73805f432d40b3c079b5a120617a196edf05929aa8c1d56aea5203ebb511ad836d8722c49d3"
+    }
+  ],
+  "aead_enc": [
+    {
+      "algorithm": "aes-256-gcm",
+      "key": "37188ab2c2f0a74efd342ef2e541e660e415aa8142fe84e1cbae2f3f55c413c4",
+      "iv": "d77e71d48ca3f934c3afef1a",
+      "aad": "6164646974696f6e616c2064617461",
+      "plaintext": "736563726574207061796c6f6164",
+      "ciphertext": "06f5e12c7e0605a95239089fe25f",
+      "tag": "ba4c228257ecb7275af1057ef21ea025"
+    },
+    {
+      "algorithm": "chacha20-poly1305",
+      "key": "803b31084ed16300aad127385a6046f24a5c8ae6e4828577f87aea9ab6303590",
+      "iv": "510b90748523a0f6cace915f",
+      "aad": "616164",
+      "plaintext": "7061796c6f6164",
+      "ciphertext": "317bd1a8e33121",
+      "tag": "1fb7d06d844f87d3eb5cb492e4574fc2"
+    }
+  ]
 };

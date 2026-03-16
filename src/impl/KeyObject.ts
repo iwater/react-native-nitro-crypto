@@ -203,6 +203,35 @@ export class KeyObject {
 
 // Factories
 
+function decodePemToDer(pem: string): Buffer {
+    const normalized = pem.replace(/\r/g, '')
+    const match = normalized.match(/-----BEGIN [^-]+-----([\s\S]*?)-----END [^-]+-----/)
+    if (!match) throw new Error('Invalid PEM key format')
+    const b64 = match[1].replace(/\s+/g, '')
+    if (!b64) throw new Error('Invalid PEM key data')
+    return Buffer.from(b64, 'base64')
+}
+
+function maybePemToDer(input: string | Buffer | ArrayBuffer, formatHint?: string): ArrayBuffer {
+    if (input instanceof ArrayBuffer) return toArrayBuffer(input)
+
+    let buf: Buffer
+    if (Buffer.isBuffer(input)) {
+        buf = input
+    } else {
+        buf = Buffer.from(input)
+    }
+
+    const hint = formatHint?.toLowerCase()
+    const utf8 = buf.toString('utf8')
+    const looksPem = utf8.includes('-----BEGIN ') && utf8.includes('-----END ')
+    if (hint === 'pem' || (hint !== 'der' && looksPem)) {
+        return toArrayBuffer(decodePemToDer(utf8))
+    }
+
+    return toArrayBuffer(buf)
+}
+
 /**
  * Creates a KeyObject from a secret key.
  * Compatible with Node.js crypto.createSecretKey API.
@@ -231,8 +260,10 @@ export function createSecretKey(key: string | Buffer | ArrayBuffer, encoding?: B
  */
 export function createPublicKey(key: string | Buffer | ArrayBuffer | KeyObject | { key: string | Buffer | ArrayBuffer, format?: string, type?: string }): KeyObject {
     let rawKey = key
+    let formatHint: string | undefined
     if (key && typeof key === 'object' && 'key' in key && !Buffer.isBuffer(key) && !(key instanceof ArrayBuffer) && !ArrayBuffer.isView(key) && !(key instanceof KeyObject)) {
         rawKey = (key as any).key
+        formatHint = (key as any).format
     }
 
     if (rawKey instanceof KeyObject) {
@@ -242,8 +273,11 @@ export function createPublicKey(key: string | Buffer | ArrayBuffer | KeyObject |
         return rawKey
     }
 
-    const keyAb = toArrayBuffer(rawKey instanceof Buffer ? rawKey : Buffer.from(rawKey as any))
+    const keyAb = maybePemToDer(rawKey as any, formatHint)
     const hybridKey = native.createKeyObjectPublic(keyAb)
+    if (!hybridKey) {
+        throw new Error('Failed to parse public key (expected valid PEM/DER key material)')
+    }
     return new KeyObject(hybridKey)
 }
 
@@ -253,8 +287,10 @@ export function createPublicKey(key: string | Buffer | ArrayBuffer | KeyObject |
  */
 export function createPrivateKey(key: string | Buffer | ArrayBuffer | KeyObject | { key: string | Buffer | ArrayBuffer, format?: string, type?: string }): KeyObject {
     let rawKey = key
+    let formatHint: string | undefined
     if (key && typeof key === 'object' && 'key' in key && !Buffer.isBuffer(key) && !(key instanceof ArrayBuffer) && !ArrayBuffer.isView(key) && !(key instanceof KeyObject)) {
         rawKey = (key as any).key
+        formatHint = (key as any).format
     }
 
     if (rawKey instanceof KeyObject) {
@@ -264,8 +300,11 @@ export function createPrivateKey(key: string | Buffer | ArrayBuffer | KeyObject 
         return rawKey
     }
 
-    const keyAb = toArrayBuffer(rawKey instanceof Buffer ? rawKey : Buffer.from(rawKey as any))
+    const keyAb = maybePemToDer(rawKey as any, formatHint)
     const hybridKey = native.createKeyObjectPrivate(keyAb)
+    if (!hybridKey) {
+        throw new Error('Failed to parse private key (expected valid PEM/DER key material)')
+    }
     return new KeyObject(hybridKey)
 }
 

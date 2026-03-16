@@ -22,8 +22,8 @@ export class Sign {
     sign(privateKey: string | Buffer | ArrayBuffer | KeyObject, outputEncoding?: 'hex' | 'base64'): Buffer | string {
         let key: string | Buffer | ArrayBuffer
         if (privateKey instanceof KeyObject) {
-            // Export as PEM for compatibility with current native implementation
-            key = privateKey.export({ format: 'pem', type: 'pkcs1' }) as string
+            // Export as PKCS#8 PEM for compatibility with current native implementation (Rust/OpenSSL)
+            key = privateKey.export({ format: 'pem', type: 'pkcs8' }) as string
         } else {
             key = privateKey
         }
@@ -53,8 +53,8 @@ export class Verify {
     verify(publicKey: string | Buffer | ArrayBuffer | KeyObject, signature: string | Buffer | ArrayBuffer, signatureEncoding?: BufferEncoding): boolean {
         let key: string | Buffer | ArrayBuffer
         if (publicKey instanceof KeyObject) {
-            // Export as PEM
-            key = publicKey.export({ format: 'pem', type: 'pkcs1' }) as string // or spki?
+            // Export as SPKI PEM
+            key = publicKey.export({ format: 'pem', type: 'spki' }) as string
         } else {
             key = publicKey
         }

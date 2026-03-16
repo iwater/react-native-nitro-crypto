@@ -9,6 +9,43 @@ extern "C" {
 
 namespace margelo::nitro::node_crypto {
 
+namespace {
+size_t expectedAesKeyLength(const std::string &algorithm) {
+  if (algorithm.rfind("aes-128-", 0) == 0)
+    return 16;
+  if (algorithm.rfind("aes-192-", 0) == 0)
+    return 24;
+  if (algorithm.rfind("aes-256-", 0) == 0)
+    return 32;
+  return 0;
+}
+
+void validateCipherParamsOrThrow(const std::string &algorithm, size_t keyLen,
+                                 size_t ivLen) {
+  size_t expectedKeyLen = expectedAesKeyLength(algorithm);
+  if (expectedKeyLen != 0 && keyLen != expectedKeyLen) {
+    throw std::runtime_error("Invalid key length");
+  }
+
+  if (algorithm.size() >= 4 &&
+      algorithm.compare(algorithm.size() - 4, 4, "-cbc") == 0) {
+    if (ivLen != 16) {
+      throw std::runtime_error("Invalid IV length");
+    }
+  } else if (algorithm.size() >= 4 &&
+             algorithm.compare(algorithm.size() - 4, 4, "-ctr") == 0) {
+    if (ivLen != 16) {
+      throw std::runtime_error("Invalid IV length");
+    }
+  } else if (algorithm.size() >= 4 &&
+             algorithm.compare(algorithm.size() - 4, 4, "-gcm") == 0) {
+    if (ivLen == 0) {
+      throw std::runtime_error("Invalid IV length");
+    }
+  }
+}
+} // namespace
+
 // ==================== HybridDiffieHellman ====================
 
 std::shared_ptr<ArrayBuffer> HybridDiffieHellman::generateKeys() {
@@ -403,14 +440,16 @@ HybridNodeCrypto::createCipheriv(const std::string &algorithm,
                                  const std::shared_ptr<ArrayBuffer> &key,
                                  const std::shared_ptr<ArrayBuffer> &iv) {
   if (!key || !iv)
-    return nullptr;
+    throw std::runtime_error("Invalid key or IV");
+
+  validateCipherParamsOrThrow(algorithm, key->size(), iv->size());
 
   ::CipherContext *ctx = rn_crypto_cipher_create(
       reinterpret_cast<const uint8_t *>(algorithm.c_str()), algorithm.length(),
       key->data(), key->size(), iv->data(), iv->size(),
       false); // is_decipher = false
   if (!ctx)
-    return nullptr; // Handle bad algo
+    throw std::runtime_error("createCipheriv failed");
 
   return std::make_shared<HybridCipher>(ctx);
 }
@@ -420,14 +459,16 @@ HybridNodeCrypto::createDecipheriv(const std::string &algorithm,
                                    const std::shared_ptr<ArrayBuffer> &key,
                                    const std::shared_ptr<ArrayBuffer> &iv) {
   if (!key || !iv)
-    return nullptr;
+    throw std::runtime_error("Invalid key or IV");
+
+  validateCipherParamsOrThrow(algorithm, key->size(), iv->size());
 
   ::CipherContext *ctx = rn_crypto_cipher_create(
       reinterpret_cast<const uint8_t *>(algorithm.c_str()), algorithm.length(),
       key->data(), key->size(), iv->data(), iv->size(),
       true); // is_decipher = true
   if (!ctx)
-    return nullptr;
+    throw std::runtime_error("createDecipheriv failed");
 
   return std::make_shared<HybridDecipher>(ctx);
 }

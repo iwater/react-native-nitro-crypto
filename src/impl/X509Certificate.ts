@@ -8,8 +8,22 @@ export class X509Certificate {
     private nativeX509: HybridX509Certificate
 
     constructor(buffer: string | Buffer | ArrayBuffer) {
-        const ab = toArrayBuffer(buffer)
-        this.nativeX509 = native.x509Parse(ab)
+        let ab: ArrayBuffer
+        if (typeof buffer === 'string' && buffer.includes('-----BEGIN CERTIFICATE-----')) {
+            const body = buffer
+                .replace(/\r/g, '')
+                .replace(/-----BEGIN CERTIFICATE-----/g, '')
+                .replace(/-----END CERTIFICATE-----/g, '')
+                .replace(/\s+/g, '')
+            ab = toArrayBuffer(Buffer.from(body, 'base64'))
+        } else {
+            ab = toArrayBuffer(buffer)
+        }
+        const parsed = native.x509Parse(ab)
+        if (!parsed) {
+            throw new Error('Failed to parse X509 certificate')
+        }
+        this.nativeX509 = parsed
     }
 
     get fingerprint(): string {

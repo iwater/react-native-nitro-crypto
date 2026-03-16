@@ -442,6 +442,26 @@ export class DiffieHellmanGroup extends DiffieHellman {
     }
 }
 
+export function aesKwWrap(kek: BinaryLike | Buffer | ArrayBuffer, key: BinaryLike | Buffer | ArrayBuffer): Buffer {
+    const res = native.aesKwWrap(prepareBuffer(kek), prepareBuffer(key))
+    return Buffer.from(res)
+}
+
+export function aesKwUnwrap(kek: BinaryLike | Buffer | ArrayBuffer, wrapped: BinaryLike | Buffer | ArrayBuffer): Buffer {
+    const res = native.aesKwUnwrap(prepareBuffer(kek), prepareBuffer(wrapped))
+    return Buffer.from(res)
+}
+
+export function aeadEncrypt(algorithm: string, key: BinaryLike | Buffer | ArrayBuffer, nonce: BinaryLike | Buffer | ArrayBuffer, plaintext: BinaryLike | Buffer | ArrayBuffer, aad: BinaryLike | Buffer | ArrayBuffer): Buffer {
+    const res = native.aeadEncrypt(algorithm.toLowerCase(), prepareBuffer(key), prepareBuffer(nonce), prepareBuffer(plaintext), prepareBuffer(aad))
+    return Buffer.from(res)
+}
+
+export function aeadDecrypt(algorithm: string, key: BinaryLike | Buffer | ArrayBuffer, nonce: BinaryLike | Buffer | ArrayBuffer, ciphertext: BinaryLike | Buffer | ArrayBuffer, aad: BinaryLike | Buffer | ArrayBuffer): Buffer {
+    const res = native.aeadDecrypt(algorithm.toLowerCase(), prepareBuffer(key), prepareBuffer(nonce), prepareBuffer(ciphertext), prepareBuffer(aad))
+    return Buffer.from(res)
+}
+
 // Main crypto object
 export const crypto = {
     randomBytes,
@@ -491,7 +511,10 @@ export const crypto = {
     pbkdf2Sync,
     secureHeapUsed,
     constants,
-    Certificate,
+    aesKwWrap,
+    aesKwUnwrap,
+    aeadEncrypt,
+    aeadDecrypt,
     webcrypto: {
         subtle: new SubtleCrypto(),
         getRandomValues,
@@ -544,6 +567,7 @@ export const crypto = {
     ECDH,
     DiffieHellman,
     DiffieHellmanGroup,
+    Certificate,
     X509Certificate,
     KeyObject
 }
