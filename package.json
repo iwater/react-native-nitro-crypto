@@ -1,6 +1,6 @@
 {
   "name": "react-native-nitro-crypto",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "High-performance Node.js & Web Crypto for React Native, powered by Nitro Modules and Rust. Almost complete coverage of Node.js 24 crypto APIs.",
   "repository": {
     "type": "git",
@@ -18,10 +18,12 @@
       "require": "./lib/index.js",
       "default": "./lib/index.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./lib/*": "./lib/*"
   },
   "scripts": {
-    "build": "tsc",
+    "one": "npm run copy-clib && npm run build",
+    "build": "npx nitrogen@0.35.0 && tsc",
     "prepare": "npm run build",
     "test": "jest",
     "copy-clib": "npm run copy-clib-ios && npm run copy-clib-android && npm run copy-clib-mac",
@@ -67,20 +69,19 @@
   "author": "iwater <iwater@gmail.com>",
   "license": "ISC",
   "peerDependencies": {
-    "react-native-nitro-modules": "^0.32.0"
+    "react-native-nitro-modules": "^0.35.0"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^20.0.0",
     "@types/react-native": "^0.73.0",
-    "nitrogen": "^0.32.0",
-    "react-native-nitro-modules": "^0.32.0",
+    "react-native-nitro-modules": "^0.35.0",
     "ts-jest": "^29.4.6",
     "typescript": "^5.3.3"
   },
   "packageManager": "yarn@4.12.0",
   "dependencies": {
-    "react-native-nitro-buffer": "~0.0.14"
+    "react-native-nitro-buffer": ">=0.0.14"
   },
   "files": [
     "lib/",

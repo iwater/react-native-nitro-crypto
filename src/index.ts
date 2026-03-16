@@ -88,6 +88,7 @@ export type {
     HashAlgorithm,
     HmacAlgorithm,
     CipherAlgorithm,
+    SignAlgorithm,
     KeyType,
     KeyObjectType,
     JsonWebKey,

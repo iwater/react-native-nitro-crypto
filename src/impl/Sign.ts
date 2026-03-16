@@ -4,7 +4,7 @@ import type { HybridSign, HybridVerify } from '../specs/NitroNodeCrypto.nitro'
 import { toArrayBuffer } from './utils'
 import { KeyObject } from './KeyObject'
 
-export type SignAlgorithm = 'rsa-sha256' | 'sha256' | 'rsa-pss-sha256' | 'rsa-pss' | 'ecdsa-sha256' | 'ecdsa' | 'ec' | 'ed25519' | 'ed448'
+export type SignAlgorithm = 'rsa-sha256' | 'sha256' | 'rsa-sha1' | 'sha1' | 'rsa-pss-sha256' | 'rsa-pss' | 'ecdsa-sha256' | 'ecdsa' | 'ec' | 'ed25519' | 'ed448'
 
 export class Sign {
     private nativeSign: HybridSign

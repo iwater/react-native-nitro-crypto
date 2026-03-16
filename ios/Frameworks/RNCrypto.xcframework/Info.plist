@@ -23,6 +23,23 @@
 		</dict>
 		<dict>
 			<key>BinaryPath</key>
+			<string>RNCrypto.framework/Versions/A/RNCrypto</string>
+			<key>LibraryIdentifier</key>
+			<string>ios-arm64_x86_64-maccatalyst</string>
+			<key>LibraryPath</key>
+			<string>RNCrypto.framework</string>
+			<key>SupportedArchitectures</key>
+			<array>
+				<string>arm64</string>
+				<string>x86_64</string>
+			</array>
+			<key>SupportedPlatform</key>
+			<string>ios</string>
+			<key>SupportedPlatformVariant</key>
+			<string>maccatalyst</string>
+		</dict>
+		<dict>
+			<key>BinaryPath</key>
 			<string>RNCrypto.framework/RNCrypto</string>
 			<key>LibraryIdentifier</key>
 			<string>ios-arm64</string>
