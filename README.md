@@ -94,7 +94,7 @@ async function signMessage() {
 
 This library supports a wide range of algorithms, including:
 
-*   **Hashes**: SHA-1, SHA-256, SHA-384, SHA-512, MD5, SHA3 family.
+*   **Hashes**: SHA-1, SHA-256, SHA-384, SHA-512, MD5, SHA3 family, RIPEMD (128, 160, 320).
 *   **HMAC**: All supported hash algorithms.
 *   **Symmetric**: AES (CBC, CTR, GCM, KW, OCB), ChaCha20-Poly1305.
 *   **Asymmetric**: RSA (OAEP, PSS, PKCS1), ECDSA, ECDH.

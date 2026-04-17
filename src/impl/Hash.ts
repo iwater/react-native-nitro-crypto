@@ -1,7 +1,7 @@
 import { Buffer } from 'react-native-nitro-buffer'
 import { native } from '../native'
 
-export type HashAlgorithm = 'sha1' | 'sha256' | 'sha384' | 'sha512' | 'md5' | 'sha3-256' | 'sha3-384' | 'sha3-512' | 'shake128' | 'shake256'
+export type HashAlgorithm = 'sha1' | 'sha256' | 'sha384' | 'sha512' | 'md5' | 'sha3-256' | 'sha3-384' | 'sha3-512' | 'shake128' | 'shake256' | 'ripemd128' | 'ripemd160' | 'ripemd320'
 
 export class Hash {
     private chunks: ArrayBuffer[] = []
@@ -81,6 +81,15 @@ export class Hash {
                 hashAb = native.cshake256(combined.buffer as ArrayBuffer, emptyCustomization, outputLen)
                 break
             }
+            case 'ripemd128':
+                hashAb = native.ripemd128(combined.buffer as ArrayBuffer)
+                break
+            case 'ripemd160':
+                hashAb = native.ripemd160(combined.buffer as ArrayBuffer)
+                break
+            case 'ripemd320':
+                hashAb = native.ripemd320(combined.buffer as ArrayBuffer)
+                break
             default:
                 throw new Error(`Unsupported hash algorithm: ${this.algorithm}`)
         }

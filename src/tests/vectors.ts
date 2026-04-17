@@ -74,6 +74,21 @@ export const vectors: any = {
       "algorithm": "md5",
       "input": "hello world",
       "expected": "5eb63bbbe01eeed093cb22bb8f5acdc3"
+    },
+    {
+      "algorithm": "ripemd128",
+      "input": "abc",
+      "expected": "c14a12199c66e4ba84636b0f69144c77"
+    },
+    {
+      "algorithm": "ripemd160",
+      "input": "abc",
+      "expected": "8eb208f7e05d987a9b044a8e98c6b087f15a0bfc"
+    },
+    {
+      "algorithm": "ripemd320",
+      "input": "abc",
+      "expected": "de4c01b3054f8930a79d09ae738e92301e5a17085beffdc1b8d116713e74f82fa942d64cdbc4682d"
     }
   ],
   "hmac": [

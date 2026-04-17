@@ -94,7 +94,7 @@ async function signMessage() {
 
 本库支持广泛的算法，包括：
 
-*   **哈希 (Hashes)**：SHA-1, SHA-256, SHA-384, SHA-512, MD5, SHA3 系列。
+*   **哈希 (Hashes)**：SHA-1, SHA-256, SHA-384, SHA-512, MD5, SHA3 系列, RIPEMD (128, 160, 320)。
 *   **HMAC**：支持所有哈希算法。
 *   **对称加密 (Symmetric)**：AES (CBC, CTR, GCM, KW, OCB), ChaCha20-Poly1305。
 *   **非对称加密 (Asymmetric)**：RSA (OAEP, PSS, PKCS1), ECDSA, ECDH。

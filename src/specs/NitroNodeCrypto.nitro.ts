@@ -151,6 +151,21 @@ export interface NitroNodeCrypto extends HybridObject<{ ios: 'c++', android: 'c+
      */
     cshake256(data: ArrayBuffer, customization: ArrayBuffer, outputLen: number): ArrayBuffer
 
+    /**
+     * Computes RIPEMD-128 hash (16 bytes).
+     */
+    ripemd128(data: ArrayBuffer): ArrayBuffer
+
+    /**
+     * Computes RIPEMD-160 hash (20 bytes).
+     */
+    ripemd160(data: ArrayBuffer): ArrayBuffer
+
+    /**
+     * Computes RIPEMD-320 hash (40 bytes).
+     */
+    ripemd320(data: ArrayBuffer): ArrayBuffer
+
     // ==================== HMAC ====================
 
     /**

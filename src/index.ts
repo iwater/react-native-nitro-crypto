@@ -533,7 +533,7 @@ export const crypto = {
         throw new Error('Not supported')
     },
     getCiphers: () => ['aes-128-cbc', 'aes-256-cbc', 'aes-128-gcm', 'aes-256-gcm', 'aes-128-ecb', 'aes-256-ecb'],
-    getHashes: () => ['sha1', 'sha256', 'sha384', 'sha512', 'md5'],
+    getHashes: () => ['sha1', 'sha256', 'sha384', 'sha512', 'md5', 'ripemd128', 'ripemd160', 'ripemd320'],
     getCurves: () => ['secp256k1', 'p-256', 'p-384', 'p-521', 'curve25519', 'ed25519', 'x25519'],
     hash: (algorithm: string, data: string | Buffer | ArrayBuffer | DataView, outputEncoding?: 'hex' | 'base64' | 'buffer') => {
         const h = createHash(algorithm);

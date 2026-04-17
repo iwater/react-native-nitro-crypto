@@ -171,6 +171,13 @@ public:
             const std::shared_ptr<ArrayBuffer> &customization,
             double outputLen) override;
 
+  std::shared_ptr<ArrayBuffer>
+  ripemd128(const std::shared_ptr<ArrayBuffer> &data) override;
+  std::shared_ptr<ArrayBuffer>
+  ripemd160(const std::shared_ptr<ArrayBuffer> &data) override;
+  std::shared_ptr<ArrayBuffer>
+  ripemd320(const std::shared_ptr<ArrayBuffer> &data) override;
+
   // HMAC
   std::shared_ptr<HybridHybridHmacSpec>
   createHmac(const std::string &algorithm,

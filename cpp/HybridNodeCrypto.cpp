@@ -321,6 +321,33 @@ HybridNodeCrypto::cshake256(const std::shared_ptr<ArrayBuffer> &data,
   return ArrayBuffer::copy(hash.data(), hash.size());
 }
 
+std::shared_ptr<ArrayBuffer>
+HybridNodeCrypto::ripemd128(const std::shared_ptr<ArrayBuffer> &data) {
+  if (!data)
+    return ArrayBuffer::allocate(0);
+  std::vector<uint8_t> hash(16);
+  rn_crypto_ripemd128(data->data(), data->size(), hash.data());
+  return ArrayBuffer::copy(hash.data(), hash.size());
+}
+
+std::shared_ptr<ArrayBuffer>
+HybridNodeCrypto::ripemd160(const std::shared_ptr<ArrayBuffer> &data) {
+  if (!data)
+    return ArrayBuffer::allocate(0);
+  std::vector<uint8_t> hash(20);
+  rn_crypto_ripemd160(data->data(), data->size(), hash.data());
+  return ArrayBuffer::copy(hash.data(), hash.size());
+}
+
+std::shared_ptr<ArrayBuffer>
+HybridNodeCrypto::ripemd320(const std::shared_ptr<ArrayBuffer> &data) {
+  if (!data)
+    return ArrayBuffer::allocate(0);
+  std::vector<uint8_t> hash(40);
+  rn_crypto_ripemd320(data->data(), data->size(), hash.data());
+  return ArrayBuffer::copy(hash.data(), hash.size());
+}
+
 // ==================== HybridHmac ====================
 
 void HybridHmac::update(const std::shared_ptr<ArrayBuffer> &data) {
