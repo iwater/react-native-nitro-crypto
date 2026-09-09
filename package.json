@@ -90,6 +90,11 @@
     "ios/",
     "android/",
     "nitrogen/",
-    "*.podspec"
+    "*.podspec",
+    "!android/build",
+    "!android/.cxx",
+    "!android/.gradle",
+    "!ios/build",
+    "!ios/DerivedData"
   ]
 }

@@ -6,3 +6,11 @@ lib
 .git
 .yarn
 .gradle
+android/build
+android/.cxx
+android/.gradle
+ios/build
+ios/DerivedData
+*.tgz
+*.log
+mac/
