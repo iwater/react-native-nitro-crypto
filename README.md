@@ -57,6 +57,13 @@ console.log(hmac.digest('hex'));
 // Random Bytes
 const random = crypto.randomBytes(16);
 console.log(random.toString('hex'));
+
+// ECDH with Ephemeral Signing
+const ecdh = crypto.createECDH('secp256r1');
+ecdh.generateKeys();
+const data = new TextEncoder().encode('handshake data');
+const signature = ecdh.sign(data.buffer);
+console.log(new Uint8Array(signature));
 ```
 
 ### Web Crypto API

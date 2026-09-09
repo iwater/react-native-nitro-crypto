@@ -51,6 +51,7 @@ These algorithms provide quantum-resistant cryptography.
   * ✅ `ecdh.getPublicKey([encoding][, format])`
   * ✅ `ecdh.setPrivateKey(privateKey[, encoding])`
   * ✅ `ecdh.setPublicKey(publicKey[, encoding])`
+  * ✅ `ecdh.sign(data[, encoding])` (Nitro Extension: Ephemeral Signing)
 * ✅ Class: `Hash`
   * ✅ `hash.copy([options])`
   * ✅ `hash.digest([encoding])`

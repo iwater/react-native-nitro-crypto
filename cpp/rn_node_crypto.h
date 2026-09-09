@@ -563,6 +563,7 @@ size_t rn_crypto_ecdh_get_private_key(const ECDH* ecdh, uint8_t* out);
 size_t rn_crypto_ecdh_get_public_key(const ECDH* ecdh, bool compressed, uint8_t* out);
 bool rn_crypto_ecdh_set_private_key(ECDH* ecdh, const uint8_t* key, size_t key_len);
 bool rn_crypto_ecdh_set_public_key(ECDH* ecdh, const uint8_t* key, size_t key_len);
+size_t rn_crypto_ecdh_sign(const ECDH* ecdh, const uint8_t* data, size_t data_len, uint8_t* out);
 
 // ==================== DH KeyObject Shared Secret ====================
 

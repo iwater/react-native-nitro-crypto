@@ -453,6 +453,8 @@ public:
   std::shared_ptr<ArrayBuffer> getPublicKey(bool compressed) override;
   bool setPrivateKey(const std::shared_ptr<ArrayBuffer> &key) override;
   bool setPublicKey(const std::shared_ptr<ArrayBuffer> &key) override;
+  std::shared_ptr<ArrayBuffer>
+  sign(const std::shared_ptr<ArrayBuffer> &data) override;
 
 private:
   ::ECDH *_ctx;

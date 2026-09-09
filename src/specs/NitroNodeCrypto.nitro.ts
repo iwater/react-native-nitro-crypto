@@ -442,6 +442,7 @@ export interface HybridECDH extends HybridObject<{ ios: 'c++', android: 'c++' }>
     getPublicKey(compressed: boolean): ArrayBuffer
     setPrivateKey(key: ArrayBuffer): boolean
     setPublicKey(key: ArrayBuffer): boolean
+    sign(data: ArrayBuffer): ArrayBuffer
 }
 
 export interface HybridHmac extends HybridObject<{ ios: 'c++', android: 'c++' }> {

@@ -47,6 +47,13 @@ export class ECDH {
         }
     }
 
+    sign(data: string | Buffer | ArrayBuffer, encoding?: BufferEncoding): Buffer | string {
+        const ab = toArrayBuffer(data)
+        const signatureAb = this.nativeECDH.sign(ab)
+        const buf = Buffer.from(signatureAb)
+        return encoding ? buf.toString(encoding) : buf
+    }
+
     static convertKey(key: string | Buffer | KeyObject | ArrayBuffer, curve: string, inputEncoding?: BufferEncoding | 'compressed' | 'uncompressed', outputEncoding?: BufferEncoding, format?: 'compressed' | 'uncompressed'): Buffer | string {
         // key can be KeyObject or buffer
 

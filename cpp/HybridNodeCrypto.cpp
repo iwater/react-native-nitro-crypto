@@ -5,6 +5,7 @@
 
 extern "C" {
 #include "rn_node_crypto.h"
+size_t rn_crypto_ecdh_sign(const ::ECDH* ecdh, const uint8_t* data, size_t data_len, uint8_t* out);
 }
 
 namespace margelo::nitro::node_crypto {
@@ -1267,6 +1268,21 @@ bool HybridECDH::setPublicKey(const std::shared_ptr<ArrayBuffer> &key) {
   if (!_ctx || !key)
     return false;
   return rn_crypto_ecdh_set_public_key(_ctx, key->data(), key->size());
+}
+
+std::shared_ptr<ArrayBuffer>
+HybridECDH::sign(const std::shared_ptr<ArrayBuffer> &data) {
+  if (!_ctx || !data)
+    return ArrayBuffer::allocate(0);
+
+  size_t len = rn_crypto_ecdh_sign(_ctx, data->data(), data->size(), nullptr);
+  if (len == 0)
+    return ArrayBuffer::allocate(0);
+
+  std::vector<uint8_t> buffer(len);
+  rn_crypto_ecdh_sign(_ctx, data->data(), data->size(), buffer.data());
+
+  return ArrayBuffer::copy(buffer.data(), buffer.size());
 }
 
 // ==================== Ed448 Key Generation ====================
