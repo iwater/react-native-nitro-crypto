@@ -14,26 +14,73 @@ export function randomBytes(size: number, callback?: (err: Error | null, buf: Bu
     return buf
 }
 
-export function randomFillSync(buffer: Buffer | ArrayBuffer | Uint8Array): Buffer | ArrayBuffer | Uint8Array {
-    const len = buffer.byteLength
-    const rand = native.randomBytes(len)
+type IntegerTypedArray =
+    | Int8Array
+    | Uint8Array
+    | Uint8ClampedArray
+    | Int16Array
+    | Uint16Array
+    | Int32Array
+    | Uint32Array
+    | BigInt64Array
+    | BigUint64Array
+
+function isIntegerTypedArray(arr: any): arr is IntegerTypedArray {
+    return (
+        arr instanceof Int8Array ||
+        arr instanceof Uint8Array ||
+        arr instanceof Uint8ClampedArray ||
+        arr instanceof Int16Array ||
+        arr instanceof Uint16Array ||
+        arr instanceof Int32Array ||
+        arr instanceof Uint32Array ||
+        (typeof BigInt64Array !== 'undefined' && arr instanceof BigInt64Array) ||
+        (typeof BigUint64Array !== 'undefined' && arr instanceof BigUint64Array)
+    )
+}
+
+export function randomFillSync<T extends Buffer | ArrayBuffer | ArrayBufferView>(
+    buffer: T,
+    offset = 0,
+    size?: number
+): T {
+    const totalByteLength = buffer.byteLength
+    if (typeof offset !== 'number' || offset < 0 || offset > totalByteLength) {
+        throw new RangeError(`offset is out of bounds: offset=${offset}, length=${totalByteLength}`)
+    }
+    const sz = size ?? (totalByteLength - offset)
+    if (typeof sz !== 'number' || sz < 0 || offset + sz > totalByteLength) {
+        throw new RangeError(`size is out of bounds: offset=${offset}, size=${sz}, length=${totalByteLength}`)
+    }
+    if (sz === 0) {
+        return buffer
+    }
+
+    const rand = native.randomBytes(sz)
+    const randBytes = new Uint8Array(rand)
+
     if (Buffer.isBuffer(buffer)) {
         const buf = Buffer.from(rand)
-        buf.copy(buffer)
+        buf.copy(buffer, offset)
         return buffer
     } else if (ArrayBuffer.isView(buffer)) {
-        (buffer as Uint8Array).set(new Uint8Array(rand))
+        new Uint8Array(buffer.buffer, buffer.byteOffset + offset, sz).set(randBytes)
         return buffer
     } else {
-        new Uint8Array(buffer).set(new Uint8Array(rand))
+        new Uint8Array(buffer, offset, sz).set(randBytes)
         return buffer
     }
 }
 
-export function randomFill(buffer: Buffer | ArrayBuffer | Uint8Array, offsetOrCallback?: number | ((err: Error | null, buf: Buffer | ArrayBuffer | Uint8Array) => void), sizeOrCallback?: number | ((err: Error | null, buf: Buffer | ArrayBuffer | Uint8Array) => void), callback?: (err: Error | null, buf: Buffer | ArrayBuffer | Uint8Array) => void): void {
+export function randomFill<T extends Buffer | ArrayBuffer | ArrayBufferView>(
+    buffer: T,
+    offsetOrCallback?: number | ((err: Error | null, buf: T) => void),
+    sizeOrCallback?: number | ((err: Error | null, buf: T) => void),
+    callback?: (err: Error | null, buf: T) => void
+): void {
     let off = 0
-    let sz = buffer.byteLength
-    let cb: ((err: Error | null, buf: Buffer | ArrayBuffer | Uint8Array) => void) | undefined
+    let sz: number | undefined
+    let cb: ((err: Error | null, buf: T) => void) | undefined
 
     if (typeof offsetOrCallback === 'function') {
         cb = offsetOrCallback
@@ -42,18 +89,14 @@ export function randomFill(buffer: Buffer | ArrayBuffer | Uint8Array, offsetOrCa
         if (typeof sizeOrCallback === 'function') {
             cb = sizeOrCallback
         } else {
-            sz = sizeOrCallback ?? (buffer.byteLength - off)
+            sz = sizeOrCallback
             cb = callback
         }
     }
 
     setTimeout(() => {
         try {
-            const subarray = buffer instanceof Buffer ? buffer.subarray(off, off + sz) :
-                ArrayBuffer.isView(buffer) ? (buffer as Uint8Array).subarray(off, off + sz) :
-                    new Uint8Array(buffer, off, sz)
-
-            randomFillSync(subarray)
+            randomFillSync(buffer, off, sz)
             if (cb) cb(null, buffer)
         } catch (err: any) {
             if (cb) cb(err, buffer)
@@ -95,8 +138,18 @@ export function randomInt(minOrMax: number, maxOrCallback?: number | ((err: Erro
     return val
 }
 
-export function getRandomValues(array: Buffer | ArrayBuffer | Uint8Array | Uint16Array | Uint32Array | Int8Array | Int16Array | Int32Array | BigInt64Array | BigUint64Array): Buffer | ArrayBuffer | Uint8Array | Uint16Array | Uint32Array | Int8Array | Int16Array | Int32Array | BigInt64Array | BigUint64Array {
-    return randomFillSync(array as any) as any
+export function getRandomValues<T extends ArrayBufferView>(array: T): T {
+    if (!isIntegerTypedArray(array)) {
+        const err = new TypeError('The data argument must be an integer-type TypedArray')
+        err.name = 'TypeMismatchError'
+        throw err
+    }
+    if (array.byteLength > 65536) {
+        const err = new RangeError('The requested length exceeds 65,536 bytes')
+        err.name = 'QuotaExceededError'
+        throw err
+    }
+    return randomFillSync(array)
 }
 
 export function randomUUID(options?: { disableEntropyCache?: boolean }): string {

@@ -250,6 +250,55 @@ export async function runCompatibilityTests(): Promise<TestReport> {
         // Primes (Sync)
         const prime = crypto.generatePrimeSync(64);
         if (!crypto.checkPrimeSync(prime)) throw new Error(`checkPrimeSync failed for generated prime`);
+
+        // getRandomValues - Uint32Array(1) (fixes issue where offset is out of bounds)
+        const u32 = new Uint32Array(1);
+        const resU32 = crypto.getRandomValues(u32);
+        if (resU32 !== u32) throw new Error('getRandomValues should return the same array reference');
+
+        // getRandomValues - various TypedArray types
+        const u16 = crypto.getRandomValues(new Uint16Array(4));
+        if (u16.length !== 4) throw new Error('getRandomValues(Uint16Array) length mismatch');
+
+        const i32 = crypto.getRandomValues(new Int32Array(2));
+        if (i32.length !== 2) throw new Error('getRandomValues(Int32Array) length mismatch');
+
+        if (typeof BigInt64Array !== 'undefined') {
+            const b64 = crypto.getRandomValues(new BigInt64Array(2));
+            if (b64.length !== 2) throw new Error('getRandomValues(BigInt64Array) length mismatch');
+        }
+
+        // getRandomValues - TypedArray with byteOffset
+        const backing = new ArrayBuffer(32);
+        const sliced = new Uint32Array(backing, 8, 2);
+        crypto.getRandomValues(sliced);
+
+        // randomFillSync with offset and size
+        const bufArr = new Uint8Array(10);
+        crypto.randomFillSync(bufArr, 2, 5);
+
+        // Error handling: non-integer typed arrays should throw TypeMismatchError
+        try {
+            crypto.getRandomValues(new Float32Array(2) as any);
+            throw new Error('getRandomValues(Float32Array) should throw TypeMismatchError');
+        } catch (e: any) {
+            if (e.name !== 'TypeMismatchError') throw e;
+        }
+
+        try {
+            crypto.getRandomValues(new DataView(new ArrayBuffer(4)) as any);
+            throw new Error('getRandomValues(DataView) should throw TypeMismatchError');
+        } catch (e: any) {
+            if (e.name !== 'TypeMismatchError') throw e;
+        }
+
+        // Error handling: Quota exceeded (> 65536 bytes)
+        try {
+            crypto.getRandomValues(new Uint8Array(65537));
+            throw new Error('getRandomValues with length > 65536 should throw QuotaExceededError');
+        } catch (e: any) {
+            if (e.name !== 'QuotaExceededError') throw e;
+        }
     });
 
     // Async API
