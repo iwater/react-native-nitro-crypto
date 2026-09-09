@@ -14,29 +14,37 @@ export function randomBytes(size: number, callback?: (err: Error | null, buf: Bu
     return buf
 }
 
-type IntegerTypedArray =
-    | Int8Array
-    | Uint8Array
-    | Uint8ClampedArray
-    | Int16Array
-    | Uint16Array
-    | Int32Array
-    | Uint32Array
-    | BigInt64Array
-    | BigUint64Array
+const INTEGER_TYPED_ARRAY_TAGS = new Set([
+    'Int8Array',
+    'Uint8Array',
+    'Uint8ClampedArray',
+    'Int16Array',
+    'Uint16Array',
+    'Int32Array',
+    'Uint32Array',
+    'BigInt64Array',
+    'BigUint64Array'
+])
 
-function isIntegerTypedArray(arr: any): arr is IntegerTypedArray {
-    return (
-        arr instanceof Int8Array ||
-        arr instanceof Uint8Array ||
-        arr instanceof Uint8ClampedArray ||
-        arr instanceof Int16Array ||
-        arr instanceof Uint16Array ||
-        arr instanceof Int32Array ||
-        arr instanceof Uint32Array ||
-        (typeof BigInt64Array !== 'undefined' && arr instanceof BigInt64Array) ||
-        (typeof BigUint64Array !== 'undefined' && arr instanceof BigUint64Array)
-    )
+function isIntegerTypedArray(arr: any): arr is ArrayBufferView {
+    if (!arr || !ArrayBuffer.isView(arr)) {
+        return false
+    }
+    const tag = Object.prototype.toString.call(arr).slice(8, -1)
+    return INTEGER_TYPED_ARRAY_TAGS.has(tag)
+}
+
+function createDOMException(message: string, name: string): Error {
+    if (typeof globalThis.DOMException === 'function') {
+        try {
+            return new globalThis.DOMException(message, name)
+        } catch {
+            // fallback
+        }
+    }
+    const err = new Error(message)
+    err.name = name
+    return err
 }
 
 export function randomFillSync<T extends Buffer | ArrayBuffer | ArrayBufferView>(
@@ -140,14 +148,10 @@ export function randomInt(minOrMax: number, maxOrCallback?: number | ((err: Erro
 
 export function getRandomValues<T extends ArrayBufferView>(array: T): T {
     if (!isIntegerTypedArray(array)) {
-        const err = new TypeError('The data argument must be an integer-type TypedArray')
-        err.name = 'TypeMismatchError'
-        throw err
+        throw createDOMException('The data argument must be an integer-type TypedArray', 'TypeMismatchError')
     }
     if (array.byteLength > 65536) {
-        const err = new RangeError('The requested length exceeds 65,536 bytes')
-        err.name = 'QuotaExceededError'
-        throw err
+        throw createDOMException('The requested length exceeds 65,536 bytes', 'QuotaExceededError')
     }
     return randomFillSync(array)
 }

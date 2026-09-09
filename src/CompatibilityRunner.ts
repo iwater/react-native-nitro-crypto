@@ -283,6 +283,9 @@ export async function runCompatibilityTests(): Promise<TestReport> {
             throw new Error('getRandomValues(Float32Array) should throw TypeMismatchError');
         } catch (e: any) {
             if (e.name !== 'TypeMismatchError') throw e;
+            if (typeof DOMException !== 'undefined' && !(e instanceof DOMException)) {
+                throw new Error('Error should be an instance of DOMException');
+            }
         }
 
         try {
@@ -290,6 +293,9 @@ export async function runCompatibilityTests(): Promise<TestReport> {
             throw new Error('getRandomValues(DataView) should throw TypeMismatchError');
         } catch (e: any) {
             if (e.name !== 'TypeMismatchError') throw e;
+            if (typeof DOMException !== 'undefined' && !(e instanceof DOMException)) {
+                throw new Error('Error should be an instance of DOMException');
+            }
         }
 
         // Error handling: Quota exceeded (> 65536 bytes)
@@ -298,6 +304,9 @@ export async function runCompatibilityTests(): Promise<TestReport> {
             throw new Error('getRandomValues with length > 65536 should throw QuotaExceededError');
         } catch (e: any) {
             if (e.name !== 'QuotaExceededError') throw e;
+            if (typeof DOMException !== 'undefined' && !(e instanceof DOMException)) {
+                throw new Error('Error should be an instance of DOMException');
+            }
         }
     });
 
