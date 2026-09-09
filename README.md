@@ -44,10 +44,14 @@ You can import `react-native-nitro-crypto` as a polyfill or use it directly.
 ```typescript
 import crypto from 'react-native-nitro-crypto';
 
-// Hashing
+// Hashing (SHA-256, BLAKE3, RIPEMD, etc.)
 const hash = crypto.createHash('sha256');
 hash.update('Hello World');
 console.log(hash.digest('hex'));
+
+const blake3Hash = crypto.createHash('blake3');
+blake3Hash.update('Hello BLAKE3');
+console.log(blake3Hash.digest('hex'));
 
 // HMAC
 const hmac = crypto.createHmac('sha256', 'secret-key');

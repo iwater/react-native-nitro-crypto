@@ -44,10 +44,14 @@ yarn add react-native-nitro-crypto
 ```typescript
 import crypto from 'react-native-nitro-crypto';
 
-// 哈希
+// 哈希 (SHA-256, BLAKE3, RIPEMD 等)
 const hash = crypto.createHash('sha256');
 hash.update('Hello World');
 console.log(hash.digest('hex'));
+
+const blake3Hash = crypto.createHash('blake3');
+blake3Hash.update('Hello BLAKE3');
+console.log(blake3Hash.digest('hex'));
 
 // HMAC
 const hmac = crypto.createHmac('sha256', 'secret-key');

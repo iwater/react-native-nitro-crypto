@@ -146,6 +146,14 @@ void rn_crypto_ripemd160(const uint8_t* data, size_t len, uint8_t* out_hash);
  */
 void rn_crypto_ripemd320(const uint8_t* data, size_t len, uint8_t* out_hash);
 
+/**
+ * Computes the BLAKE3 hash of the input data.
+ * @param data Pointer to input data
+ * @param len Length of input data
+ * @param out_hash Pointer to a buffer of at least 32 bytes
+ */
+void rn_crypto_blake3(const uint8_t* data, size_t len, uint8_t* out_hash);
+
 
 // ==================== HMAC ====================
 

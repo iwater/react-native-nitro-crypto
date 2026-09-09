@@ -349,6 +349,15 @@ HybridNodeCrypto::ripemd320(const std::shared_ptr<ArrayBuffer> &data) {
   return ArrayBuffer::copy(hash.data(), hash.size());
 }
 
+std::shared_ptr<ArrayBuffer>
+HybridNodeCrypto::blake3(const std::shared_ptr<ArrayBuffer> &data) {
+  if (!data)
+    return ArrayBuffer::allocate(0);
+  std::vector<uint8_t> hash(32);
+  rn_crypto_blake3(data->data(), data->size(), hash.data());
+  return ArrayBuffer::copy(hash.data(), hash.size());
+}
+
 // ==================== HybridHmac ====================
 
 void HybridHmac::update(const std::shared_ptr<ArrayBuffer> &data) {

@@ -146,6 +146,14 @@ void rn_crypto_ripemd160(const uint8_t* data, size_t len, uint8_t* out_hash);
  */
 void rn_crypto_ripemd320(const uint8_t* data, size_t len, uint8_t* out_hash);
 
+/**
+ * Computes the BLAKE3 hash of the input data.
+ * @param data Pointer to input data
+ * @param len Length of input data
+ * @param out_hash Pointer to a buffer of at least 32 bytes
+ */
+void rn_crypto_blake3(const uint8_t* data, size_t len, uint8_t* out_hash);
+
 
 // ==================== HMAC ====================
 
@@ -563,7 +571,6 @@ size_t rn_crypto_ecdh_get_private_key(const ECDH* ecdh, uint8_t* out);
 size_t rn_crypto_ecdh_get_public_key(const ECDH* ecdh, bool compressed, uint8_t* out);
 bool rn_crypto_ecdh_set_private_key(ECDH* ecdh, const uint8_t* key, size_t key_len);
 bool rn_crypto_ecdh_set_public_key(ECDH* ecdh, const uint8_t* key, size_t key_len);
-size_t rn_crypto_ecdh_sign(const ECDH* ecdh, const uint8_t* data, size_t data_len, uint8_t* out);
 
 // ==================== DH KeyObject Shared Secret ====================
 

@@ -166,6 +166,11 @@ export interface NitroNodeCrypto extends HybridObject<{ ios: 'c++', android: 'c+
      */
     ripemd320(data: ArrayBuffer): ArrayBuffer
 
+    /**
+     * Computes BLAKE3 hash (32 bytes).
+     */
+    blake3(data: ArrayBuffer): ArrayBuffer
+
     // ==================== HMAC ====================
 
     /**

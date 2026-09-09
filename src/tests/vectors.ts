@@ -89,6 +89,16 @@ export const vectors: any = {
       "algorithm": "ripemd320",
       "input": "abc",
       "expected": "de4c01b3054f8930a79d09ae738e92301e5a17085beffdc1b8d116713e74f82fa942d64cdbc4682d"
+    },
+    {
+      "algorithm": "blake3",
+      "input": "",
+      "expected": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+    },
+    {
+      "algorithm": "blake3",
+      "input": "abc",
+      "expected": "6437b3ac38465133ffb63b75273a8db548c558465d79db03fd359c6cd5bd9d85"
     }
   ],
   "hmac": [

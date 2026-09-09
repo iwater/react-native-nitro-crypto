@@ -177,6 +177,8 @@ public:
   ripemd160(const std::shared_ptr<ArrayBuffer> &data) override;
   std::shared_ptr<ArrayBuffer>
   ripemd320(const std::shared_ptr<ArrayBuffer> &data) override;
+  std::shared_ptr<ArrayBuffer>
+  blake3(const std::shared_ptr<ArrayBuffer> &data) override;
 
   // HMAC
   std::shared_ptr<HybridHybridHmacSpec>
