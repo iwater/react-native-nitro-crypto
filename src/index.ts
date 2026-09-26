@@ -532,9 +532,15 @@ export const crypto = {
     setEngine: (engine: string, flags?: number) => {
         throw new Error('Not supported')
     },
-    getCiphers: () => ['aes-128-cbc', 'aes-256-cbc', 'aes-128-gcm', 'aes-256-gcm', 'aes-128-ecb', 'aes-256-ecb'],
-    getHashes: () => ['sha1', 'sha256', 'sha384', 'sha512', 'md5', 'ripemd128', 'ripemd160', 'ripemd320', 'blake3'],
-    getCurves: () => ['secp256k1', 'p-256', 'p-384', 'p-521', 'curve25519', 'ed25519', 'x25519'],
+    // ⚠️ 下面三张「能力表」**不再手写** —— 直接问原生侧。
+    // 原生侧是唯一真值，且它的「名字表」与「名字分发」**由同一个宏展开**
+    // （cipher / curve），hash 由 Rust 单测保证「声明即可算」⇒ 声明与实现不可能漂移。
+    // 原先这三份手写表与实现**两个方向都不一致**：
+    //   声明了没实现的 `aes-128-ecb` / `aes-256-ecb`、漏掉实现了的
+    //   `sha3-256/384/512`、`shake128/256`、`aes-192-cbc`、`aes-*-ctr`。
+        getCiphers: () => native.listCiphers(),
+    getHashes: () => native.listHashes(),
+    getCurves: () => native.listCurves(),
     hash: (algorithm: string, data: string | Buffer | ArrayBuffer | DataView, outputEncoding?: 'hex' | 'base64' | 'buffer') => {
         const h = createHash(algorithm);
         h.update(data as any);

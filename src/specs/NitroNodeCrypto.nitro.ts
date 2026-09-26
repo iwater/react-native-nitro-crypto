@@ -171,6 +171,83 @@ export interface NitroNodeCrypto extends HybridObject<{ ios: 'c++', android: 'c+
      */
     blake3(data: ArrayBuffer): ArrayBuffer
 
+    /**
+     * Computes SHA-224 hash (28 bytes). 对应 node 的 `createHash('sha224')`。
+     */
+    sha224(data: ArrayBuffer): ArrayBuffer
+
+    /**
+     * Computes SHA-512/224 hash (28 bytes). 对应 node 的 `createHash('sha512-224')`。
+     */
+    sha512_224(data: ArrayBuffer): ArrayBuffer
+
+    /**
+     * Computes SHA-512/256 hash (32 bytes). 对应 node 的 `createHash('sha512-256')`。
+     */
+    sha512_256(data: ArrayBuffer): ArrayBuffer
+
+    /**
+     * Computes SHA3-224 hash (28 bytes). 对应 node 的 `createHash('sha3-224')`。
+     */
+    sha3_224(data: ArrayBuffer): ArrayBuffer
+
+    /**
+     * Computes BLAKE2b-512 hash (64 bytes). 对应 node 的 `createHash('blake2b512')`。
+     */
+    blake2b512(data: ArrayBuffer): ArrayBuffer
+
+    /**
+     * Computes BLAKE2s-256 hash (32 bytes). 对应 node 的 `createHash('blake2s256')`。
+     */
+    blake2s256(data: ArrayBuffer): ArrayBuffer
+
+    /**
+     * Computes SM3 hash (32 bytes，OSCCA GM/T 0004-2012). 对应 node 的 `createHash('sm3')`。
+     */
+    sm3(data: ArrayBuffer): ArrayBuffer
+
+    /**
+     * Computes MD5 || SHA-1 concatenation (36 bytes). 对应 node 的 `createHash('md5-sha1')`
+     * —— 是**两个摘要的拼接**，不是新算法。
+     */
+    md5_sha1(data: ArrayBuffer): ArrayBuffer
+
+    // ==================== 能力枚举 ====================
+    //
+    // ⚠️ 这三张表由**原生侧**给出（原生层），与实现**同源**：
+    //    cipher / curve 的「名字表」与「名字分发」由同一个宏展开，
+    //    hash 由 `hash.rs` 的测试保证「声明即可算」。
+    //    JS 层**不再手写清单** —— 原先那三份手写表与实现**两个方向都不一致**
+    //    （声明了没实现的 `aes-*-ecb`、漏掉实现了的 `sha3-*` / `shake*` / `aes-*-ctr`）。
+    //
+    // 对应 node 的 `crypto.getHashes()` / `getCiphers()` / `getCurves()`。
+
+    /**
+     * 支持的哈希名（node 的算法名）。对应 `crypto.getHashes()`。
+     */
+    listHashes(): string[]
+
+    /**
+     * 支持的 cipher 名（node 的算法名）。对应 `crypto.getCiphers()`。
+     */
+    listCiphers(): string[]
+
+    /**
+     * 支持的 EC 曲线名（**node 的规范名**，如 `prime256v1`）。对应 `crypto.getCurves()`。
+     */
+    listCurves(): string[]
+
+    /**
+     * 把哈希名解析到**底层摘要名** —— node/OpenSSL 的别名（`RSA-SHA256`、`sha256WithRSAEncryption`、
+     * `id-rsassa-pkcs1-v1_5-with-sha3-256`、`rmd160`…）折到底层（`sha256` / `sha3-256` / `ripemd160`）。
+     * 真算法名恒等返回；**未知返回入参原样**（调用方据此走「不支持」分支）。
+     *
+     * ⚠️ 别名表在原生侧（原生层 的 `HASH_ALIASES`），与
+     * `SUPPORTED_HASHES` 一起由单测双向锁住。实测这 31 个别名在 node 上
+     * `createHash(别名).digest() === createHash(底层).digest()`（逐字节相同）。
+     */
+    hashBase(name: string): string
+
     // ==================== HMAC ====================
 
     /**

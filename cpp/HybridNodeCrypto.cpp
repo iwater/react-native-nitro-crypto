@@ -12,12 +12,19 @@ namespace margelo::nitro::node_crypto {
 
 namespace {
 size_t expectedAesKeyLength(const std::string &algorithm) {
+  // ⚠️ XTS 的 key 是 **2×**（两个 AES key 拼在一起）—— 实测 node：
+  //    `aes-128-xts` keyLength 32、`aes-256-xts` keyLength 64。
+  //    按名字里的位数直接推会**误拒**合法的 XTS 调用。
+  // ⚠️ 这段逻辑在 JS 侧（`src/impl/Cipheriv.ts` 的 `expectedAesKeyLength`）**也有一份**，
+  //    两处必须一起改 —— 本轮就漏了这份，导致 XTS 在 C++ 被挡下。
+  const bool xts = algorithm.size() >= 4 &&
+                   algorithm.compare(algorithm.size() - 4, 4, "-xts") == 0;
   if (algorithm.rfind("aes-128-", 0) == 0)
-    return 16;
+    return xts ? 32 : 16;
   if (algorithm.rfind("aes-192-", 0) == 0)
-    return 24;
+    return xts ? 48 : 24;
   if (algorithm.rfind("aes-256-", 0) == 0)
-    return 32;
+    return xts ? 64 : 32;
   return 0;
 }
 
@@ -130,6 +137,9 @@ HybridCipher::update(const std::shared_ptr<ArrayBuffer> &data) {
   if (!data || data->size() == 0)
     return ArrayBuffer::allocate(0);
 
+  // ⚠️ 累计输入字节数 —— `final()` 要用它定缓冲区（见 hpp 里 `_inputBytes` 的注释）。
+  _inputBytes += data->size();
+
   // For update, output size can be at most input size + block size (buffered)
   // Or exactly input size for CTR.
   // Rust implementation returns exact bytes written. C API will need a buffer.
@@ -141,10 +151,19 @@ HybridCipher::update(const std::shared_ptr<ArrayBuffer> &data) {
 }
 
 std::shared_ptr<ArrayBuffer> HybridCipher::final() {
-  // Finalize handles padding (up to one block size).
-  std::vector<uint8_t> buffer(32); // Max block size usually 16, 32 safe
-  size_t written = rn_crypto_cipher_final(_ctx, buffer.data());
-  return ArrayBuffer::copy(buffer.data(), written);
+  // ⚠️ 缓冲区按**实际喂进去的字节数**定，不能写死 32：
+  //    AEAD（GCM/OCB/ChaCha20-Poly1305）是「缓冲到 final 一次性输出」，
+  //    明文超过 32 字节时旧的 32 字节缓冲会被写越界（实测 1000 字节直接崩溃）。
+  //    所有模式的上界 = 输入总长 + 32（CBC ≤ +16、AEAD = 输入长、key-wrap = 0）。
+  std::vector<uint8_t> buffer(_inputBytes + 32);
+  int32_t written =
+      rn_crypto_cipher_final(_ctx, buffer.data(), buffer.size());
+  if (written < 0) {
+    // -1 = finalize 失败（如 GCM 认证失败）**或**输出超出缓冲区 —— 都不能静默。
+    throw std::runtime_error(
+        "cipher final() failed (authentication failure, or output exceeded buffer)");
+  }
+  return ArrayBuffer::copy(buffer.data(), static_cast<size_t>(written));
 }
 
 void HybridCipher::setAutoPadding(bool auto_padding) {
@@ -163,8 +182,14 @@ std::shared_ptr<ArrayBuffer> HybridCipher::getAuthTag() {
 
   // First call with NULL to get length
   int32_t len = rn_crypto_cipher_get_auth_tag(_ctx, nullptr, 0);
-  if (len <= 0)
-    return ArrayBuffer::allocate(0);
+  if (len <= 0) {
+    // ⚠️ 没有 tag = 这条 cipher **不是 AEAD**（CBC/CTR/key-wrap）或还没 final。
+    //    原先返回**空 Buffer** —— 调用方不查长度就会把空 tag 当 tag 传下去。
+    //    node 在这里抛 `ERR_CRYPTO_INVALID_STATE`，所以改成抛错（可观测）。
+    throw std::runtime_error(
+        "Invalid state for getAuthTag — this cipher has no authentication tag "
+        "(not an AEAD mode, or final() has not been called)");
+  }
 
   std::vector<uint8_t> buffer(len);
   int32_t res =
@@ -182,6 +207,14 @@ HybridDecipher::update(const std::shared_ptr<ArrayBuffer> &data) {
   if (!data || data->size() == 0)
     return ArrayBuffer::allocate(0);
 
+  // ⚠️ 必须累计输入字节数 —— `final()` 要用它定缓冲区（见 hpp 里 `_inputBytes` 的注释）。
+  //    AEAD 是「缓冲到 final 一次性输出」⇒ 不累计的话 `final()` 只分配 32 字节，
+  //    而整个明文都要写进去 ⇒ **堆越界**（实测：GCM 解密 64 字节明文 ⇒ 退出时
+  //    `libsystem_malloc` 的 `mfm_free` 报 `EXC_BREAKPOINT` / SIGTRAP）。
+  //    这也是为什么只有 AEAD 崩、CBC 不崩：CBC 的 `update` 就把数据出完了，
+  //    `final` 只出 padding 余数（≤16 字节），32 字节够用。
+  _inputBytes += data->size();
+
   std::vector<uint8_t> buffer(data->size() + 32);
   size_t written =
       rn_crypto_cipher_update(_ctx, data->data(), data->size(), buffer.data());
@@ -189,9 +222,16 @@ HybridDecipher::update(const std::shared_ptr<ArrayBuffer> &data) {
 }
 
 std::shared_ptr<ArrayBuffer> HybridDecipher::final() {
-  std::vector<uint8_t> buffer(32);
-  size_t written = rn_crypto_cipher_final(_ctx, buffer.data());
-  return ArrayBuffer::copy(buffer.data(), written);
+  // 同 `HybridCipher::final`：按实际输入字节数定缓冲，避免 AEAD 解密时写越界。
+  std::vector<uint8_t> buffer(_inputBytes + 32);
+  int32_t written =
+      rn_crypto_cipher_final(_ctx, buffer.data(), buffer.size());
+  if (written < 0) {
+    // -1 = finalize 失败（如 GCM 认证失败）**或**输出超出缓冲区 —— 都不能静默。
+    throw std::runtime_error(
+        "cipher final() failed (authentication failure, or output exceeded buffer)");
+  }
+  return ArrayBuffer::copy(buffer.data(), static_cast<size_t>(written));
 }
 
 void HybridDecipher::setAutoPadding(bool auto_padding) {
@@ -356,6 +396,132 @@ HybridNodeCrypto::blake3(const std::shared_ptr<ArrayBuffer> &data) {
   std::vector<uint8_t> hash(32);
   rn_crypto_blake3(data->data(), data->size(), hash.data());
   return ArrayBuffer::copy(hash.data(), hash.size());
+}
+
+std::shared_ptr<ArrayBuffer>
+HybridNodeCrypto::sha224(const std::shared_ptr<ArrayBuffer> &data) {
+  if (!data)
+    return ArrayBuffer::allocate(0);
+  std::vector<uint8_t> hash(28);
+  rn_crypto_sha224(data->data(), data->size(), hash.data());
+  return ArrayBuffer::copy(hash.data(), hash.size());
+}
+
+std::shared_ptr<ArrayBuffer>
+HybridNodeCrypto::sha512_224(const std::shared_ptr<ArrayBuffer> &data) {
+  if (!data)
+    return ArrayBuffer::allocate(0);
+  std::vector<uint8_t> hash(28);
+  rn_crypto_sha512_224(data->data(), data->size(), hash.data());
+  return ArrayBuffer::copy(hash.data(), hash.size());
+}
+
+std::shared_ptr<ArrayBuffer>
+HybridNodeCrypto::sha512_256(const std::shared_ptr<ArrayBuffer> &data) {
+  if (!data)
+    return ArrayBuffer::allocate(0);
+  std::vector<uint8_t> hash(32);
+  rn_crypto_sha512_256(data->data(), data->size(), hash.data());
+  return ArrayBuffer::copy(hash.data(), hash.size());
+}
+
+std::shared_ptr<ArrayBuffer>
+HybridNodeCrypto::sha3_224(const std::shared_ptr<ArrayBuffer> &data) {
+  if (!data)
+    return ArrayBuffer::allocate(0);
+  std::vector<uint8_t> hash(28);
+  rn_crypto_sha3_224(data->data(), data->size(), hash.data());
+  return ArrayBuffer::copy(hash.data(), hash.size());
+}
+
+std::shared_ptr<ArrayBuffer>
+HybridNodeCrypto::blake2b512(const std::shared_ptr<ArrayBuffer> &data) {
+  if (!data)
+    return ArrayBuffer::allocate(0);
+  std::vector<uint8_t> hash(64);
+  rn_crypto_blake2b512(data->data(), data->size(), hash.data());
+  return ArrayBuffer::copy(hash.data(), hash.size());
+}
+
+std::shared_ptr<ArrayBuffer>
+HybridNodeCrypto::blake2s256(const std::shared_ptr<ArrayBuffer> &data) {
+  if (!data)
+    return ArrayBuffer::allocate(0);
+  std::vector<uint8_t> hash(32);
+  rn_crypto_blake2s256(data->data(), data->size(), hash.data());
+  return ArrayBuffer::copy(hash.data(), hash.size());
+}
+
+std::shared_ptr<ArrayBuffer>
+HybridNodeCrypto::sm3(const std::shared_ptr<ArrayBuffer> &data) {
+  if (!data)
+    return ArrayBuffer::allocate(0);
+  std::vector<uint8_t> hash(32);
+  rn_crypto_sm3(data->data(), data->size(), hash.data());
+  return ArrayBuffer::copy(hash.data(), hash.size());
+}
+
+std::shared_ptr<ArrayBuffer>
+HybridNodeCrypto::md5_sha1(const std::shared_ptr<ArrayBuffer> &data) {
+  if (!data)
+    return ArrayBuffer::allocate(0);
+  std::vector<uint8_t> hash(36); // md5(16) || sha1(20)
+  rn_crypto_md5_sha1(data->data(), data->size(), hash.data());
+  return ArrayBuffer::copy(hash.data(), hash.size());
+}
+
+// ==================== 能力枚举 ====================
+//
+// 三张表的**唯一真值在原生侧**（原生层）：
+//   · cipher / curve 的「名字表」与「名字分发」由同一个宏展开 ⇒ 不可能漂移；
+//   · hash 由 `hash.rs` 的测试保证「声明即可算」。
+// JS 层的 `getHashes()` / `getCiphers()` / `getCurves()` 直接转发这里，
+// **不再手写清单**。
+
+namespace {
+/// 按 `<kind>_count()` + `<kind>_name(i, buf, len)` 约定枚举一张名字表。
+/// `name` 返回写入字节数（不含 NUL），`-1` = 缓冲区不够（当前最长名字 11 字节，256 足够）。
+std::vector<std::string> rnListNames(int32_t (*count)(),
+                                     int32_t (*name)(int32_t, uint8_t *,
+                                                     size_t)) {
+  std::vector<std::string> out;
+  const int32_t n = count();
+  out.reserve(n > 0 ? static_cast<size_t>(n) : 0);
+  for (int32_t i = 0; i < n; ++i) {
+    char buf[256];
+    const int32_t written =
+        name(i, reinterpret_cast<uint8_t *>(buf), sizeof(buf));
+    if (written < 0)
+      continue; // 不该发生：表里没有超长名字
+    out.emplace_back(buf, static_cast<size_t>(written));
+  }
+  return out;
+}
+} // namespace
+
+std::vector<std::string> HybridNodeCrypto::listHashes() {
+  return rnListNames(rn_crypto_hash_count, rn_crypto_hash_name);
+}
+
+std::vector<std::string> HybridNodeCrypto::listCiphers() {
+  return rnListNames(rn_crypto_cipher_count, rn_crypto_cipher_name);
+}
+
+std::vector<std::string> HybridNodeCrypto::listCurves() {
+  return rnListNames(rn_crypto_curve_count, rn_crypto_curve_name);
+}
+
+std::string HybridNodeCrypto::hashBase(const std::string &name) {
+  // 别名表在原生侧（原生层 的 `HASH_ALIASES`）。
+  // 解析不出来就**原样返回** —— 调用方（`Hash.ts`）据此抛
+  // `Unsupported hash algorithm: <name>`，不会静默算错。
+  char buf[256];
+  const int32_t written = rn_crypto_hash_base(
+      reinterpret_cast<const uint8_t *>(name.data()), name.size(),
+      reinterpret_cast<uint8_t *>(buf), sizeof(buf));
+  if (written < 0)
+    return name;
+  return std::string(buf, static_cast<size_t>(written));
 }
 
 // ==================== HybridHmac ====================

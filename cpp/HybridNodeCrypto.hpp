@@ -53,6 +53,12 @@ public:
 
 private:
   ::CipherContext *_ctx;
+  /// `update()` 累计喂进去的字节数 —— 用来给 `final()` **定缓冲区大小**。
+  ///
+  /// ⚠️ 原先 `final()` 固定分配 32 字节，而 AEAD 是「缓冲到 final 一次性输出」
+  /// ⇒ 明文 > 32 字节时 `rn_crypto_cipher_final` 会**写越界**（实测 1000 字节直接崩溃）。
+  /// 所有模式的上界都是 `输入总长 + 32`（CBC ≤ +16、AEAD = 输入长、key-wrap = 0）。
+  size_t _inputBytes = 0;
 };
 
 class HybridDecipher : public HybridHybridDecipherSpec {
@@ -75,6 +81,8 @@ public:
 
 private:
   ::CipherContext *_ctx;
+  /// 同 `HybridCipher::_inputBytes` —— 给 `final()` 定缓冲区大小，避免越界。
+  size_t _inputBytes = 0;
 };
 
 // ==================== Sign / Verify ====================
@@ -179,6 +187,34 @@ public:
   ripemd320(const std::shared_ptr<ArrayBuffer> &data) override;
   std::shared_ptr<ArrayBuffer>
   blake3(const std::shared_ptr<ArrayBuffer> &data) override;
+  std::shared_ptr<ArrayBuffer>
+  sha224(const std::shared_ptr<ArrayBuffer> &data) override;
+  std::shared_ptr<ArrayBuffer>
+  sha512_224(const std::shared_ptr<ArrayBuffer> &data) override;
+  std::shared_ptr<ArrayBuffer>
+  sha512_256(const std::shared_ptr<ArrayBuffer> &data) override;
+  std::shared_ptr<ArrayBuffer>
+  sha3_224(const std::shared_ptr<ArrayBuffer> &data) override;
+  std::shared_ptr<ArrayBuffer>
+  blake2b512(const std::shared_ptr<ArrayBuffer> &data) override;
+  std::shared_ptr<ArrayBuffer>
+  blake2s256(const std::shared_ptr<ArrayBuffer> &data) override;
+  std::shared_ptr<ArrayBuffer>
+  sm3(const std::shared_ptr<ArrayBuffer> &data) override;
+  std::shared_ptr<ArrayBuffer>
+  md5_sha1(const std::shared_ptr<ArrayBuffer> &data) override;
+
+  // 能力枚举 —— 三张表由**原生侧**给出（原生层），
+  // 与实现同源。JS 层不再手写清单（手写清单必漂，见
+  // 由原生层回报）。
+  std::vector<std::string>
+  listHashes() override;
+  std::vector<std::string>
+  listCiphers() override;
+  std::vector<std::string>
+  listCurves() override;
+  std::string
+  hashBase(const std::string &name) override;
 
   // HMAC
   std::shared_ptr<HybridHybridHmacSpec>

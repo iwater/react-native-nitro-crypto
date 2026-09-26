@@ -1,13 +1,25 @@
 import { Buffer } from 'react-native-nitro-buffer'
 import { native } from '../native'
 
-export type HashAlgorithm = 'sha1' | 'sha256' | 'sha384' | 'sha512' | 'md5' | 'sha3-256' | 'sha3-384' | 'sha3-512' | 'shake128' | 'shake256' | 'ripemd128' | 'ripemd160' | 'ripemd320' | 'blake3'
+// ⚠️ 这个类型是**编译期便利**，不是运行时真值 —— 运行时的 `getHashes()` 直接问原生侧
+// （原生层 的 `SUPPORTED_HASHES`，由该文件的单测保证「声明即可算」）。
+// 改算法时以原生侧那张表为准，这里跟着改（当前 22 个）。
+export type HashAlgorithm = 'sha1' | 'sha224' | 'sha256' | 'sha384' | 'sha512' | 'sha512-224' | 'sha512-256' | 'md5' | 'sha3-224' | 'sha3-256' | 'sha3-384' | 'sha3-512' | 'shake128' | 'shake256' | 'ripemd128' | 'ripemd160' | 'ripemd320' | 'blake3' | 'blake2b512' | 'blake2s256' | 'sm3' | 'md5-sha1'
 
 export class Hash {
     private chunks: ArrayBuffer[] = []
     private outputLength: number | undefined
+    /** 已折到底层的算法名（构造期由 `native.hashBase` 解析）。 */
+    private algorithm: HashAlgorithm
 
-    constructor(private algorithm: HashAlgorithm, options?: { outputLength?: number }) {
+    constructor(algorithm: HashAlgorithm, options?: { outputLength?: number }) {
+        // ⚠️ 先把 node/OpenSSL 风格的**别名**折到底层再分发：
+        //    `RSA-SHA256` → `sha256`、`rmd160` → `ripemd160`、
+        //    `id-rsassa-pkcs1-v1_5-with-sha3-256` → `sha3-256` …（共 31 个，实测与底层逐字节相同）
+        //    别名表在**原生侧**（原生层 的 `HASH_ALIASES`），
+        //    与 `SUPPORTED_HASHES` 一起被单测双向锁住 ⇒ 不可能漂移。
+        //    解析不出来的名字**原样返回** ⇒ 下面 switch 的 default 会抛，不会静默算错。
+        this.algorithm = native.hashBase(algorithm) as HashAlgorithm
         this.outputLength = options?.outputLength
     }
 
@@ -49,14 +61,26 @@ export class Hash {
             case 'sha256':
                 hashAb = native.sha256(combined.buffer as ArrayBuffer)
                 break
+            case 'sha224':
+                hashAb = native.sha224(combined.buffer as ArrayBuffer)
+                break
             case 'sha384':
                 hashAb = native.sha384(combined.buffer as ArrayBuffer)
                 break
             case 'sha512':
                 hashAb = native.sha512(combined.buffer as ArrayBuffer)
                 break
+            case 'sha512-224':
+                hashAb = native.sha512_224(combined.buffer as ArrayBuffer)
+                break
+            case 'sha512-256':
+                hashAb = native.sha512_256(combined.buffer as ArrayBuffer)
+                break
             case 'md5':
                 hashAb = native.md5(combined.buffer as ArrayBuffer)
+                break
+            case 'sha3-224':
+                hashAb = native.sha3_224(combined.buffer as ArrayBuffer)
                 break
             case 'sha3-256':
                 hashAb = native.sha3_256(combined.buffer as ArrayBuffer)
@@ -92,6 +116,18 @@ export class Hash {
                 break
             case 'blake3':
                 hashAb = native.blake3(combined.buffer as ArrayBuffer)
+                break
+            case 'blake2b512':
+                hashAb = native.blake2b512(combined.buffer as ArrayBuffer)
+                break
+            case 'blake2s256':
+                hashAb = native.blake2s256(combined.buffer as ArrayBuffer)
+                break
+            case 'sm3':
+                hashAb = native.sm3(combined.buffer as ArrayBuffer)
+                break
+            case 'md5-sha1':
+                hashAb = native.md5_sha1(combined.buffer as ArrayBuffer)
                 break
             default:
                 throw new Error(`Unsupported hash algorithm: ${this.algorithm}`)

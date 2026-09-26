@@ -154,6 +154,62 @@ void rn_crypto_ripemd320(const uint8_t* data, size_t len, uint8_t* out_hash);
  */
 void rn_crypto_blake3(const uint8_t* data, size_t len, uint8_t* out_hash);
 
+/**
+ * Computes the BLAKE2b-512 hash of the input data.
+ * @param out_hash Pointer to a buffer of at least 64 bytes
+ */
+void rn_crypto_blake2b512(const uint8_t* data, size_t len, uint8_t* out_hash);
+
+/**
+ * Computes the BLAKE2s-256 hash of the input data.
+ * @param out_hash Pointer to a buffer of at least 32 bytes
+ */
+void rn_crypto_blake2s256(const uint8_t* data, size_t len, uint8_t* out_hash);
+
+/**
+ * Computes the SM3 hash of the input data (OSCCA GM/T 0004-2012).
+ * @param out_hash Pointer to a buffer of at least 32 bytes
+ */
+void rn_crypto_sm3(const uint8_t* data, size_t len, uint8_t* out_hash);
+
+/**
+ * Computes MD5 || SHA-1 concatenation (36 bytes).
+ * @param out_hash Pointer to a buffer of at least 36 bytes
+ */
+void rn_crypto_md5_sha1(const uint8_t* data, size_t len, uint8_t* out_hash);
+
+/**
+ * Computes the SHA-224 hash of the input data.
+ * @param data Pointer to input data
+ * @param len Length of input data
+ * @param out_hash Pointer to a buffer of at least 28 bytes
+ */
+void rn_crypto_sha224(const uint8_t* data, size_t len, uint8_t* out_hash);
+
+/**
+ * Computes the SHA-512/224 hash of the input data.
+ * @param data Pointer to input data
+ * @param len Length of input data
+ * @param out_hash Pointer to a buffer of at least 28 bytes
+ */
+void rn_crypto_sha512_224(const uint8_t* data, size_t len, uint8_t* out_hash);
+
+/**
+ * Computes the SHA-512/256 hash of the input data.
+ * @param data Pointer to input data
+ * @param len Length of input data
+ * @param out_hash Pointer to a buffer of at least 32 bytes
+ */
+void rn_crypto_sha512_256(const uint8_t* data, size_t len, uint8_t* out_hash);
+
+/**
+ * Computes the SHA3-224 hash of the input data.
+ * @param data Pointer to input data
+ * @param len Length of input data
+ * @param out_hash Pointer to a buffer of at least 28 bytes
+ */
+void rn_crypto_sha3_224(const uint8_t* data, size_t len, uint8_t* out_hash);
+
 
 // ==================== HMAC ====================
 
@@ -346,6 +402,27 @@ int32_t rn_crypto_aes_kw_unwrap(const uint8_t* kek, size_t kek_len,
                                 const uint8_t* wrapped, size_t wrapped_len,
                                 uint8_t* out);
 
+// ---- IV 感知的 AES key-wrap（node 的 createCipheriv('aes*-wrap', key, iv) 用得上）----
+// node 把 `iv` 当 RFC 3394 的**初始 A 值**用 ⇒ 换 IV 换输出；crate 的 Kek 固定 IV。
+// 默认 IV（A6A6A6A6A6A6A6A6）下 rn_crypto_aes_kw_wrap 与 rn_crypto_aes_kw_wrap_iv 逐字节相同。
+int32_t rn_crypto_aes_kw_wrap_iv(const uint8_t* kek, size_t kek_len,
+                                 const uint8_t* iv, size_t iv_len,
+                                 const uint8_t* data, size_t data_len,
+                                 uint8_t* out);
+int32_t rn_crypto_aes_kw_unwrap_iv(const uint8_t* kek, size_t kek_len,
+                                   const uint8_t* iv, size_t iv_len,
+                                   const uint8_t* wrapped, size_t wrapped_len,
+                                   uint8_t* out);
+// RFC 5649（AES-KWP，`aes*-wrap-pad`）：`iv` 是 4 字节，AIV = iv || MLI。
+int32_t rn_crypto_aes_kwp_wrap(const uint8_t* kek, size_t kek_len,
+                               const uint8_t* iv, size_t iv_len,
+                               const uint8_t* data, size_t data_len,
+                               uint8_t* out);
+int32_t rn_crypto_aes_kwp_unwrap(const uint8_t* kek, size_t kek_len,
+                                 const uint8_t* iv, size_t iv_len,
+                                 const uint8_t* wrapped, size_t wrapped_len,
+                                 uint8_t* out);
+
 // ==================== Cipher / Decipher ====================
 
 typedef struct CipherContext CipherContext;
@@ -382,9 +459,12 @@ size_t rn_crypto_cipher_update(CipherContext* ctx,
  * Finalizes the cipher (handles padding).
  * @param ctx Context
  * @param out Output buffer (can be NULL to get size)
- * @return Bytes written
+ * @return Bytes written, or -1 on failure / if the output exceeds `out_cap`
  */
-size_t rn_crypto_cipher_final(CipherContext* ctx, uint8_t* out);
+// ⚠️ 带**容量**参数并返回 int32_t：`-1` = finalize 失败或输出超出 `out_cap`。
+//    没有容量校验的话，调用方给小了缓冲区就是**堆越界**——Release 下表现为
+//    「进程退出时分配器报 bad free」，极难定位（本项目实测过一次）。
+int32_t rn_crypto_cipher_final(CipherContext* ctx, uint8_t* out, size_t out_cap);
 
 /**
  * Sets auto padding (for CBC mode).
@@ -723,6 +803,25 @@ size_t rn_crypto_mlkem_ek_len(int32_t level);
 size_t rn_crypto_mlkem_dk_len(int32_t level);
 size_t rn_crypto_mlkem_ct_len(int32_t level);
 size_t rn_crypto_mlkem_ss_len(int32_t level);
+
+// ==================== Capability enumeration ====================
+//
+// 支持的哈希 / cipher / 曲线 —— 由宿主 crypto.getHashes() / getCiphers() / getCurves()
+// **直接回报**，不再在 JS 层手写一份清单（手写清单与实现两个方向都会漂）。
+// 声明表与分发同源：cipher 与 curve 由宏与 match 一起展开，hash 由 hash.rs 的测试保证
+// 「声明即可算」。
+//
+// 约定（与其它 FFI 一致）：名字写进调用方缓冲区，返回写入字节数（**不含 NUL**）；
+// -1 = index 越界 / out 为空 / 缓冲区不够。
+int32_t rn_crypto_hash_count(void);
+int32_t rn_crypto_hash_name(int32_t index, uint8_t* out, size_t out_len);
+// 把名字解析到**底层摘要名**：真算法名恒等，别名（RSA-SHA256 / rmd160 / …）返回底层，
+// 未知返回 -1。宿主 `Hash.ts` 用它把 node 风格的别名折到底层再分发。
+int32_t rn_crypto_hash_base(const uint8_t* name, size_t name_len, uint8_t* out, size_t out_len);
+int32_t rn_crypto_cipher_count(void);
+int32_t rn_crypto_cipher_name(int32_t index, uint8_t* out, size_t out_len);
+int32_t rn_crypto_curve_count(void);
+int32_t rn_crypto_curve_name(int32_t index, uint8_t* out, size_t out_len);
 
 
 #ifdef __cplusplus
