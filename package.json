@@ -1,6 +1,6 @@
 {
   "name": "react-native-nitro-crypto",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "High-performance Node.js & Web Crypto for React Native, powered by Nitro Modules and Rust. Almost complete coverage of Node.js 24 crypto APIs.",
   "repository": {
     "type": "git",
@@ -71,7 +71,7 @@
   "author": "iwater <iwater@gmail.com>",
   "license": "ISC",
   "peerDependencies": {
-    "react-native-nitro-modules": "^0.35.0"
+    "react-native-nitro-modules": "0.35.0 - 0.37.1"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
