@@ -26,6 +26,8 @@
     "build": "npx nitrogen@0.35.0 && tsc",
     "prepare": "npm run build",
     "test": "jest",
+    "gen-constants": "node scripts/gen-constants.mjs",
+    "check-constants": "node scripts/gen-constants.mjs --check",
     "copy-clib": "npm run copy-clib-ios && npm run copy-clib-android && npm run copy-clib-mac",
     "copy-clib-ios": "rm -rf ios/Frameworks/RNCrypto.xcframework && mkdir -p ios/Frameworks && cp -R ../rust_c_crypto/target/xcframework/RNCrypto.xcframework ios/Frameworks/",
     "copy-clib-android": "mkdir -p android/libs/arm64-v8a android/libs/armeabi-v7a android/libs/x86 android/libs/x86_64 && cp ../rust_c_crypto/target/universal/android/arm64-v8a/librn_node_crypto.so android/libs/arm64-v8a/ && cp ../rust_c_crypto/target/universal/android/armeabi-v7a/librn_node_crypto.so android/libs/armeabi-v7a/ && cp ../rust_c_crypto/target/universal/android/x86/librn_node_crypto.so android/libs/x86/ && cp ../rust_c_crypto/target/universal/android/x86_64/librn_node_crypto.so android/libs/x86_64/",
